@@ -14,9 +14,11 @@ function NavBar({ user }: ProfileProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/secret-page-1', label: 'Secret Page 1' },
-    { href: '/secret-page-2', label: 'Secret Page 2' },
-    { href: '/secret-page-3', label: 'Secret Page 3' },
+    { href: '/to-do', label: 'To-Do' },
+    { href: '/drive-lite', label: 'Drive' },
+    { href: '/food-review', label: 'Food' },
+    { href: '/pokemon-review', label: 'Pokemon' },
+    { href: '/markdown-page', label: 'Markdown' }
   ];
 
   return (

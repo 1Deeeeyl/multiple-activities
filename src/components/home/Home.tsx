@@ -3,7 +3,6 @@
 import { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import Navbar from '@/components/navbar/Navbar';
 import NavBar from '@/components/navbar/Navbar';
 import Container from '../container/Container';
 
@@ -26,7 +25,7 @@ function HomePage({ user }: HomePageProps) {
           .single();
 
         setUsername(profile?.username);
-        console.log(profile);
+        // console.log(profile);
       } catch (err) {
         console.error('Error loading profile:', err);
       } finally {
