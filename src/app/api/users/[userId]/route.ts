@@ -19,15 +19,11 @@ export async function DELETE(
 
     const supabase = await createClient(); //No argument uses anon key
 
-    // Delete in friends table
-    const { error: friendsDeleteError } = await supabase
-      .from('friends')
-      .delete()
-      .or(`user_id.eq.${userId},friend_id.eq.${userId}`);
+    
 
-    // Delete in secret_messages table
-    const { error: secretMessagesDeleteError } = await supabase
-      .from('secret_messages')
+    // Delete in todos table
+    const { error: todosDeleteError } = await supabase
+      .from('todos')
       .delete()
       .eq('profile_id', userId);
 
@@ -37,10 +33,10 @@ export async function DELETE(
       .delete()
       .eq('profile_id', userId);
 
-    if (profileDeleteError || secretMessagesDeleteError || friendsDeleteError) {
+    if (profileDeleteError || todosDeleteError) {
       console.error(
         'Error deleting profile data:',
-        profileDeleteError || secretMessagesDeleteError || friendsDeleteError
+        profileDeleteError || todosDeleteError 
       );
       return NextResponse.json(
         { error: 'Error deleting profile data' },

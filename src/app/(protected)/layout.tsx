@@ -20,7 +20,7 @@ export default async function RootLayout({
       <header className="bg-white p-5 mb-[25px] rounded box-border">
         <NavBar user={user} />
       </header>
-      {children}
+      <main>{children}</main>
     </>
   );
 }
