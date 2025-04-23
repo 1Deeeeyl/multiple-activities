@@ -5,8 +5,21 @@ import Hero from '@/components/hero/Hero';
 import TodoForm from '@/components/todoForm/ToDoForm';
 import TodoList from '@/components/todoList/ToDoList';
 import { TodoProvider } from '@/context/TodoContext';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
 
-export default function ToDoPage() {
+
+
+export default async function ToDoPage() {
+
+  const supabase = await createClient();
+
+  const { data } = await supabase.auth.getUser();
+  const user = data?.user;
+
+  if (!user) {
+    redirect('/');
+  }
   return (
     <Container>
       <Hero h1="To-Do" description="A simple To-Do page" />

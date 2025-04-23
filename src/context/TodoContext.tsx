@@ -35,23 +35,25 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     const fetchTodos = async () => {
       try {
         setIsLoading(true);
-        
-        const { data: { user } } = await supabase.auth.getUser();
-        
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
         if (!user) {
           throw new Error('User not authenticated');
         }
-        
+
         const { data, error: todosError } = await supabase
           .from('todos')
           .select('*')
           .eq('profile_id', user.id)
           .order('created_at', { ascending: false });
-          
+
         if (todosError) {
           throw new Error(todosError.message);
         }
-        
+
         const formattedTodos = data.map((todo) => ({
           id: todo.id,
           text: todo.task,
@@ -60,7 +62,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           created_at: todo.created_at,
           updated_at: todo.updated_at,
         }));
-        
+
         setTodos(formattedTodos);
       } catch (err) {
         console.error('Error fetching todos:', err);
@@ -69,21 +71,23 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     };
-    
+
     fetchTodos();
   }, [supabase]);
 
   // Add a new todo
   const addTodo = async (todoText: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         throw new Error('User not authenticated');
       }
-      
+
       const now = new Date().toISOString();
-      
+
       const { data, error } = await supabase
         .from('todos')
         .insert({
@@ -94,11 +98,11 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           updated_at: now,
         })
         .select();
-        
+
       if (error) {
         throw new Error(error.message);
       }
-      
+
       if (data && data[0]) {
         const formattedTodo: Todo = {
           id: data[0].id,
@@ -108,7 +112,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           created_at: data[0].created_at,
           updated_at: data[0].updated_at,
         };
-        
+
         setTodos((prevTodos) => [formattedTodo, ...prevTodos]);
       }
     } catch (err) {
@@ -120,27 +124,31 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   // Toggle a todo's completion status
   const toggleTodo = async (id: string) => {
     try {
-      const todoToUpdate = todos.find(todo => todo.id === id);
-      
+      const todoToUpdate = todos.find((todo) => todo.id === id);
+
       if (!todoToUpdate) return;
-      
+
       const now = new Date().toISOString();
-      
+
       const { error } = await supabase
         .from('todos')
-        .update({ 
+        .update({
           is_complete: !todoToUpdate.isDone,
-          updated_at: now
+          updated_at: now,
         })
         .eq('id', id);
-        
+
       if (error) {
         throw new Error(error.message);
       }
-      
-      setTodos(todos.map(todo => 
-        todo.id === id ? { ...todo, isDone: !todo.isDone, updated_at: now } : todo
-      ));
+
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id
+            ? { ...todo, isDone: !todo.isDone, updated_at: now }
+            : todo
+        )
+      );
     } catch (err) {
       console.error('Error toggling todo:', err);
       setError((err as Error).message);
@@ -151,26 +159,30 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   const editTodo = async (id: string, newText: string) => {
     try {
       if (!newText.trim()) {
-        throw new Error("Task text cannot be empty");
+        throw new Error('Task text cannot be empty');
       }
-      
+
       const now = new Date().toISOString();
-      
+
       const { error } = await supabase
         .from('todos')
-        .update({ 
+        .update({
           task: newText.trim(),
-          updated_at: now
+          updated_at: now,
         })
         .eq('id', id);
-        
+
       if (error) {
         throw new Error(error.message);
       }
-      
-      setTodos(todos.map(todo => 
-        todo.id === id ? { ...todo, text: newText.trim(), updated_at: now } : todo
-      ));
+
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id
+            ? { ...todo, text: newText.trim(), updated_at: now }
+            : todo
+        )
+      );
     } catch (err) {
       console.error('Error editing todo:', err);
       setError((err as Error).message);
@@ -181,16 +193,13 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   // Delete a todo
   const deleteTodo = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('todos')
-        .delete()
-        .eq('id', id);
-        
+      const { error } = await supabase.from('todos').delete().eq('id', id);
+
       if (error) {
         throw new Error(error.message);
       }
-      
-      setTodos(todos.filter(todo => todo.id !== id));
+
+      setTodos(todos.filter((todo) => todo.id !== id));
     } catch (err) {
       console.error('Error deleting todo:', err);
       setError((err as Error).message);
@@ -199,15 +208,17 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <TodoContext.Provider value={{ 
-      todos, 
-      isLoading, 
-      error, 
-      addTodo, 
-      toggleTodo, 
-      editTodo,
-      deleteTodo 
-    }}>
+    <TodoContext.Provider
+      value={{
+        todos,
+        isLoading,
+        error,
+        addTodo,
+        toggleTodo,
+        editTodo,
+        deleteTodo,
+      }}
+    >
       {children}
     </TodoContext.Provider>
   );
@@ -216,10 +227,10 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
 // Custom hook to use the todo context
 export function useTodos() {
   const context = useContext(TodoContext);
-  
+
   if (context === undefined) {
     throw new Error('useTodos must be used within a TodoProvider');
   }
-  
+
   return context;
 }
