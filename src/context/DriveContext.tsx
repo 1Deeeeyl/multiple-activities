@@ -23,12 +23,12 @@ type DriveContextType = {
   images: ImageFile[];
   loading: boolean;
   error: string | null;
-  refreshImages: () => Promise<void>;
   deleteImage: (id: string) => Promise<void>;
   updateImage: (id: string,text:string) => Promise<void>;
   searchImage: (text:string) => Promise<void>;
   sortImages: (by: 'none' | 'name' | 'date-new' | 'date-old') => void;
-
+  uploadFile: (file: File) => Promise<void>; 
+  isUploading: boolean;
 };
 
 // Create the context with default values
@@ -47,6 +47,7 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // Function to fetch images
   const fetchImages = async () => {
@@ -90,6 +91,37 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
       setError('Failed to load images');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const uploadFile = async (file: File) => {
+    try {
+      if (!file) {
+        throw new Error('No file selected');
+      }
+
+      setIsUploading(true);
+      setError(null);
+
+      const { data: fileData, error: fileError } = await supabase.storage
+        .from('drive')
+        .upload(user.id + '/' + file.name, file);
+
+      if (fileError) {
+        throw fileError;
+      }
+
+      console.log('File uploaded successfully:', fileData);
+      
+      // Refresh images list after upload
+      await fetchImages();
+      
+    } catch (err) {
+      console.error('Upload error:', err);
+      setError('Upload failed');
+      throw err;
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -254,11 +286,12 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
     images,
     loading,
     error,
-    refreshImages: fetchImages,
     deleteImage,
     updateImage,
     searchImage,
-    sortImages
+    sortImages,
+    uploadFile,
+    isUploading,
   };
 
   return (

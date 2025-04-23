@@ -8,7 +8,14 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import SearchBar from '@/components/searchBar/SearchBar';
 import SortDropdown from '@/components/sortDropdown/SortDropdown';
+import type { Metadata } from 'next';
 
+
+
+export const metadata: Metadata = {
+  title: "Google Drive Lite",
+  description: "Knockoff Google Drive lite website.",
+};
 export default async function DrivePage() {
   const supabase = await createClient();
 
@@ -27,7 +34,7 @@ export default async function DrivePage() {
       />
       <div className="bg-white p-5 rounded">
         <DriveProvider user={user}>
-          <FileInput user={user} />
+          <FileInput />
           <div className="flex flex-col sm:flex-row sm:gap-25 justify-center items-center">
             <SearchBar />
             <SortDropdown />

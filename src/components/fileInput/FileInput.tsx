@@ -1,23 +1,16 @@
 'use client';
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
 import { useDrive } from '@/context/DriveContext'; // Import the context
 
-type userProps = {
-  user: User;
-};
 
-export default function FileInput({ user }: userProps) {
+
+export default function FileInput() {
   const [fileName, setFileName] = useState<string>('No file chosen');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const supabase = createClient();
-  
-  
+
   // Use the image context
-  const { refreshImages } = useDrive();
+  const { uploadFile, isUploading } = useDrive();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -45,29 +38,17 @@ export default function FileInput({ user }: userProps) {
         return;
       }
 
-      setIsUploading(true);
-
-      const { data: fileData, error: fileError } = await supabase.storage
-        .from('drive')
-        .upload(user.id + '/' + file.name, file);
-
-      if (fileError) {
-        throw fileError;
-      }
+      await uploadFile(file);
 
       // Reset form
       setFileName('No file chosen');
       setFile(null);
-      
+
       // Refresh images list after upload
-      await refreshImages();
-      
-      console.log('File uploaded successfully:', fileData);
+    //   await refreshImages();
     } catch (err) {
       console.error('Upload error:', err);
       alert('Upload failed');
-    } finally {
-      setIsUploading(false);
     }
   };
 
