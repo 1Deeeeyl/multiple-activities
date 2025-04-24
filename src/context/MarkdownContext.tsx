@@ -33,6 +33,8 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   const supabase = createClient();
   const [markdowns, setMarkdowns] = useState<MarkdownData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const now = new Date().toISOString();
+
 
   // Function to fetch all markdowns for the current user
   const fetchMarkdowns = async () => {
@@ -50,7 +52,6 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   };
 
   const addMarkdown = async (title: string, body: string) => {
-    const now = new Date().toISOString();
 
     const { data, error } = await supabase
       .from('markdowns')

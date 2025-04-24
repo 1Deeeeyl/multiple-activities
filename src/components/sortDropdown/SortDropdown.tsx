@@ -14,7 +14,7 @@ export default function SortDropdown() {
             e.target.value as 'none' | 'name' | 'date-old' | 'date-new'
           )
         }
-        className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none"
       >
         <option value="none">Original</option>
         <option value="name">Alphabetic (A-Z)</option>

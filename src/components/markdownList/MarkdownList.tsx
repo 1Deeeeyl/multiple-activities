@@ -3,10 +3,12 @@ import React from 'react';
 import { useMarkdown } from '@/context/MarkdownContext';
 import Modal from '../modal/Modal';
 import { useState } from 'react';
+import Markdown from 'react-markdown';
 
 export default function MarkdownList() {
   const { markdowns, deleteMarkdown, error } = useMarkdown();
   const [open, setOpen] = useState(false);
+  const [markdownView, setMarkdownView] = useState('view');
   const [modal, setModal] = useState('');
   const [markdownTitle, setMarkdownTitle] = useState('');
   const [markdownBody, setMarkdownBody] = useState('');
@@ -98,8 +100,28 @@ export default function MarkdownList() {
           </div>
         ) : modal === 'view' ? (
           <>
-            <h3>{markdownTitle}</h3>
-            <p>{markdownBody}</p>
+            <div>
+              <h3 className="font-bold text-zinc-800 text-2xl tracking-wider mb-3">
+                {markdownTitle}
+              </h3>
+              <label className="mr-2 font-medium text-gray-700">Sort by:</label>
+              <select
+                onChange={(e) =>
+                  setMarkdownView(e.target.value as 'view' | 'raw')
+                }
+                className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none"
+              >
+                <option value="view">Mardown View</option>
+                <option value="raw">Markdown Raw</option>
+              </select>
+            </div>
+            <div className="prose bg-zinc-200 max-h-120 overflow-y-auto p-5 rounded mt-5">
+              {markdownView === 'raw' ? (
+                <pre>{markdownBody}</pre>
+              ) : (
+                <Markdown>{markdownBody}</Markdown>
+              )}
+            </div>
           </>
         ) : (
           <></>
