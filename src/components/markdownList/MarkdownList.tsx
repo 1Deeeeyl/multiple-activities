@@ -17,16 +17,17 @@ export default function MarkdownList() {
     null
   );
 
-  const handleDeleteBtn = (id: string) => {
-    setOpen(!open);
-    setModal('delete');
-    setSelectedMarkdownId(id);
-  };
   const handleViewBtn = (title: string, body: string) => {
     setOpen(!open);
     setModal('view');
     setMarkdownTitle(title);
     setMarkdownBody(body);
+  };
+
+  const handleDeleteBtn = (id: string) => {
+    setOpen(!open);
+    setModal('delete');
+    setSelectedMarkdownId(id);
   };
 
   const confirmDelete = async () => {
@@ -37,7 +38,30 @@ export default function MarkdownList() {
       setSelectedMarkdownId(null);
     } catch (err) {
       console.error('Error deleting todo:', err);
-      alert('Failed to delete task. Please try again.');
+      alert('Failed to delete note. Please try again.');
+    } finally {
+      setIsProcessing(false);
+      setOpen(false);
+    }
+  };
+
+  const handleUpdateBtn = (id: string, title: string, body: string) => {
+    setOpen(!open);
+    setModal('update');
+    setSelectedMarkdownId(id);
+    setMarkdownTitle(title);
+    setMarkdownBody(body);
+  };
+
+  const confirmUpdate = async () => {
+    if (!selectedMarkdownId) return;
+    try {
+      setIsProcessing(true);
+      //   await deleteMarkdown(selectedMarkdownId);
+      setSelectedMarkdownId(null);
+    } catch (err) {
+      console.error('Error updating todo:', err);
+      alert('Failed to update note. Please try again.');
     } finally {
       setIsProcessing(false);
       setOpen(false);
@@ -62,16 +86,22 @@ export default function MarkdownList() {
                   VIEW
                 </button>
                 <button
-                  // onClick={() => handleUpdateBtn(image.id, image.name)}
+                  onClick={() =>
+                    handleUpdateBtn(
+                      markdown.markdown_id,
+                      markdown.title,
+                      markdown.body
+                    )
+                  }
                   className="py-2 px-5 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
                 >
-                  Update
+                  UPDATE
                 </button>
                 <button
                   onClick={() => handleDeleteBtn(markdown.markdown_id)}
                   className="py-2 px-5 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
                 >
-                  Delete
+                  DELETE
                 </button>
               </div>{' '}
             </li>
@@ -124,7 +154,40 @@ export default function MarkdownList() {
             </div>
           </>
         ) : (
-          <></>
+          <>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="markdownTitle">Title</label>
+              <input
+                value={markdownTitle}
+                onChange={(e) => setMarkdownTitle(e.target.value)}
+                type="text"
+                name="markdownTitle"
+                id="markdownTitle"
+                className="border rounded p-2"
+                disabled={isProcessing}
+              />
+            </div>
+            <div className="flex flex-col gap-2 mt-3">
+              <label htmlFor="markdownBody">Body</label>
+              <textarea
+                value={markdownBody}
+                onChange={(e) => setMarkdownBody(e.target.value)}
+                name="markdownBody"
+                id="markdownBody"
+                className="border rounded max-h-40 p-2 resize-none overflow-y-auto text-sm"
+                disabled={isProcessing}
+                rows={5}
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              onClick={() => confirmUpdate()}
+              className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3"
+              disabled={isProcessing}
+            >
+              {isProcessing ? 'UPDATING...' : 'UPDATE'}
+            </button>
+          </>
         )}
       </Modal>
     </>
