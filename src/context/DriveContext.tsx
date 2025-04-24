@@ -6,7 +6,6 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode,
 } from 'react';
 
 // Define the type for our image objects
@@ -37,7 +36,7 @@ const DriveContext = createContext<DriveContextType | undefined>(undefined);
 // Props for the provider component
 type DriveProviderProps = {
   user: User;
-  children: ReactNode;
+  children: React.ReactNode;
 };
 
 // The provider component

@@ -87,13 +87,13 @@ export default function ImageGallery() {
             <div className="flex justify-end gap-5 mt-5">
               <button
                 onClick={() => handleUpdateBtn(image.id, image.name)}
-                className="py-2 px-5 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+                className="py-2 px-5 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
               >
                 Update
               </button>
               <button
                 onClick={() => handleDeleteBtn(image.id)}
-                className="py-2 px-5 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+                className="py-2 px-5 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
               >
                 Delete
               </button>
