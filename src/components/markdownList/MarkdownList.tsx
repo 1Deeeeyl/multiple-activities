@@ -6,13 +6,21 @@ import { useState } from 'react';
 import Markdown from 'react-markdown';
 
 export default function MarkdownList() {
-  const { markdowns, deleteMarkdown, error } = useMarkdown();
+  const {
+    markdowns,
+    deleteMarkdown,
+    error,
+    updateMarkdown,
+    isLoading,
+    resetError,
+  } = useMarkdown();
   const [open, setOpen] = useState(false);
   const [markdownView, setMarkdownView] = useState('view');
   const [modal, setModal] = useState('');
   const [markdownTitle, setMarkdownTitle] = useState('');
   const [markdownBody, setMarkdownBody] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [empty, setEmpty] = useState<string | null>(null);
   const [selectedMarkdownId, setSelectedMarkdownId] = useState<string | null>(
     null
   );
@@ -38,7 +46,6 @@ export default function MarkdownList() {
       setSelectedMarkdownId(null);
     } catch (err) {
       console.error('Error deleting todo:', err);
-      alert('Failed to delete note. Please try again.');
     } finally {
       setIsProcessing(false);
       setOpen(false);
@@ -46,6 +53,7 @@ export default function MarkdownList() {
   };
 
   const handleUpdateBtn = (id: string, title: string, body: string) => {
+    setEmpty(null); 
     setOpen(!open);
     setModal('update');
     setSelectedMarkdownId(id);
@@ -54,22 +62,56 @@ export default function MarkdownList() {
   };
 
   const confirmUpdate = async () => {
+    if (!markdownTitle.trim()) {
+      setEmpty('Title is required');
+      return;
+    }
+    if (!markdownBody.trim()) {
+      setEmpty('Body is required');
+      return;
+    }
+
+    setEmpty(null);
+    resetError();
     if (!selectedMarkdownId) return;
     try {
       setIsProcessing(true);
-      //   await deleteMarkdown(selectedMarkdownId);
+      await updateMarkdown(selectedMarkdownId, markdownTitle, markdownBody);
       setSelectedMarkdownId(null);
     } catch (err) {
       console.error('Error updating todo:', err);
-      alert('Failed to update note. Please try again.');
     } finally {
       setIsProcessing(false);
       setOpen(false);
     }
   };
 
+
+  if (isLoading) {
+    return <div className="text-center py-4">Loading markdown notes...</div>;
+  }
+
+//   if (error) {
+//     return <div className="text-center py-4 text-red-500">{error}</div>;
+//   }
+
+  if (!isLoading && markdowns.length === 0) {
+    return <div className="text-center py-4">No markdown notes available.</div>;
+  }
+
   return (
     <>
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+          {error}
+          <button
+            onClick={resetError}
+            className="ml-2 text-sm font-medium underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <section>
         <ul className="flex flex-row flex-wrap gap-5 justify-center items-center mt-[25px]">
           {markdowns.map((markdown) => (
@@ -134,7 +176,7 @@ export default function MarkdownList() {
               <h3 className="font-bold text-zinc-800 text-2xl tracking-wider mb-3">
                 {markdownTitle}
               </h3>
-              <label className="mr-2 font-medium text-gray-700">Sort by:</label>
+              <label className="mr-2 font-medium text-gray-700">View:</label>
               <select
                 onChange={(e) =>
                   setMarkdownView(e.target.value as 'view' | 'raw')
@@ -179,6 +221,11 @@ export default function MarkdownList() {
                 rows={5}
               ></textarea>
             </div>
+            {empty && (
+              <div className="bg-red-100 text-red-700 px-4 py-2 rounded mt-3">
+                {empty}
+              </div>
+            )}
             <button
               type="submit"
               onClick={() => confirmUpdate()}
@@ -193,3 +240,5 @@ export default function MarkdownList() {
     </>
   );
 }
+
+// update logic

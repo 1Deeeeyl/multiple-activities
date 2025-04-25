@@ -5,7 +5,7 @@ import Hero from '@/components/hero/Hero';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { MarkdownProvider } from '@/context/MarkdownContext';
-import MarkdownAddButton from '@/components/markdownAddButton/MarkdownAddButton';
+import MarkdownAddButton from '@/components/buttons/markdownAddButton/MarkdownAddButton';
 import MarkdownList from '@/components/markdownList/MarkdownList';
 
 export const metadata: Metadata = {
