@@ -2,18 +2,24 @@
 import React, { useState } from 'react';
 import { useDrive } from '@/context/DriveContext';
 
-export default function SearchBar() {
-  const { searchImage,refreshImages } = useDrive();
+export default function SearchBarDrive() {
+  const { searchImage, refreshImages } = useDrive();
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    if (searchText.trim() === '') {
-      await refreshImages();
-    } else {
-      await searchImage(searchText);
+    setIsLoading(true);
+    try {
+      if (searchText.trim() === '') {
+        await refreshImages();
+      } else {
+        await searchImage(searchText);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,7 +42,7 @@ export default function SearchBar() {
    px-8 py-4 font-semibold rounded-full text-center"
         disabled={isLoading}
       >
-        {isLoading ? 'Searching...' : 'Search'}
+        {isLoading ? 'SEARCHING...' : 'SEARCH'}
       </button>
     </form>
   );

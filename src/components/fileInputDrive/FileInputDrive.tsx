@@ -2,8 +2,6 @@
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { useDrive } from '@/context/DriveContext'; // Import the context
 
-
-
 export default function FileInput() {
   const [fileName, setFileName] = useState<string>('No file chosen');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,7 +43,7 @@ export default function FileInput() {
       setFile(null);
 
       // Refresh images list after upload
-    //   await refreshImages();
+      //   await refreshImages();
     } catch (err) {
       console.error('Upload error:', err);
       alert('Upload failed');
@@ -78,6 +76,7 @@ export default function FileInput() {
             type="file"
             name="file"
             id="file"
+            accept="image/*"
             onChange={handleFileChange}
           />
         </div>

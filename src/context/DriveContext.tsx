@@ -28,6 +28,7 @@ type DriveContextType = {
   sortImages: (by: 'none' | 'name' | 'date-new' | 'date-old') => void;
   uploadFile: (file: File) => Promise<void>; 
   isUploading: boolean;
+  refreshImages:()=>void
 };
 
 // Create the context with default values
@@ -291,6 +292,7 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
     sortImages,
     uploadFile,
     isUploading,
+    refreshImages:fetchImages
   };
 
   return (

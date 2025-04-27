@@ -1,12 +1,12 @@
 import Container from '@/components/container/Container';
-import FileInput from '@/components/fileInput/FileInput';
+import FileInputDrive from '@/components/fileInputDrive/FileInputDrive';
 import DriveImage from '@/components/driveImage/DriveImage';
 import { DriveProvider } from '@/context/DriveContext';
 import Hero from '@/components/hero/Hero';
 import React from 'react';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import SearchBar from '@/components/searchBar/SearchBar';
+import SearchBarDrive from '@/components/searchBarDrive/SearchBarDrive';
 import SortDropdown from '@/components/sortDropdown/SortDropdown';
 import type { Metadata } from 'next';
 
@@ -34,9 +34,9 @@ export default async function DrivePage() {
       />
       <div className="bg-white p-5 rounded">
         <DriveProvider user={user}>
-          <FileInput />
+          <FileInputDrive />
           <div className="flex flex-col sm:flex-row sm:gap-25 justify-center items-center">
-            <SearchBar />
+            <SearchBarDrive />
             <SortDropdown />
           </div>
           <DriveImage />

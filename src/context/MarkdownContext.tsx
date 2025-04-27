@@ -36,7 +36,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   const [markdowns, setMarkdowns] = useState<MarkdownData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const now = new Date().toISOString();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const resetError = () => {
     setError(null);

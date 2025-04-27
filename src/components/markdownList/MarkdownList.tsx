@@ -145,7 +145,7 @@ export default function MarkdownList() {
                 >
                   DELETE
                 </button>
-              </div>{' '}
+              </div>
             </li>
           ))}
         </ul>
