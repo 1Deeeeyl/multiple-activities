@@ -11,18 +11,17 @@ export default function SortDropdown() {
       <select
         onChange={(e) =>
           sortImages(
-            e.target.value as 'none' | 'name' | 'date-old' | 'date-new'
+            e.target.value as 'default' | 'alphabetical' | 'date-old-new' | 'date-new-old'
           )
         }
         className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none"
       >
-        <option value="none">Original</option>
-        <option value="name">Alphabetic (A-Z)</option>
-        <option value="date-new">Upload Date (newest first)</option>
-        <option value="date-old">Upload Date (oldest first)</option>
+        <option value="default">Default</option>
+        <option value="alphabetical">Alphabetical</option>
+        <option value="date-old-new">Upload Date (old-new)</option>
+        <option value="date-new-old">Upload Date (new-old)</option>
       </select>
     </div>
   );
 }
-
 // not reusable (wrong implementation)

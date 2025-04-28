@@ -18,7 +18,7 @@ type DriveContextType = {
   deleteImage: (id: string) => Promise<void>;
   updateImage: (id: string, text: string) => Promise<void>;
   searchImage: (text: string) => Promise<void>;
-  sortImages: (by: 'none' | 'name' | 'date-new' | 'date-old') => void;
+  sortImages: (by: 'default' | 'alphabetical' | 'date-old-new' | 'date-new-old') => void;
   uploadFile: (file: File) => Promise<void>;
   isUploading: boolean;
   refreshImages: () => void;
@@ -240,21 +240,21 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
     }
   };
 
-  const sortImages = (by: 'none' | 'name' | 'date-new' | 'date-old') => {
-    if (by === 'none') {
+  const sortImages = (by: 'default' | 'alphabetical' | 'date-old-new' | 'date-new-old') => {
+    if (by === 'default') {
       setImages(originalImages);
       return;
     }
 
     const sorted = [...images].sort((a, b) => {
-      if (by === 'name') {
+      if (by === 'alphabetical') {
         return a.name.localeCompare(b.name);
-      } else if (by === 'date-new') {
+      } else if (by === 'date-new-old') {
         return (
           new Date(b.created_at || '').getTime() -
           new Date(a.created_at || '').getTime()
         );
-      } else if (by === 'date-old') {
+      } else if (by === 'date-old-new') {
         return (
           new Date(a.created_at || '').getTime() -
           new Date(b.created_at || '').getTime()
@@ -262,7 +262,7 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
       }
       return 0;
     });
-
+  
     setImages(sorted);
   };
 
