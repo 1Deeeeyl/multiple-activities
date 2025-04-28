@@ -7,52 +7,42 @@ import { useParams } from 'next/navigation';
 import Modal from '@/components/modal/Modal';
 import Link from 'next/link';
 
-// Import consolidated hook
 import { usePokemonPage } from './hooks/usePokemon';
 
 export default function PokemonViewPage() {
   const params = useParams();
   const pokemonId = params.pokemonId?.toString();
 
-  // Use the consolidated hook
   const {
-    // User
     user,
     isUserLoading,
-
-    // Pokemon
-    pokemon,
-    isPokemonLoading,
     pokemonError,
-
-    // Reviews
+    pokemon,
     reviews,
     userReview,
     isReviewsLoading,
     reviewError,
+    isSubmitting,
     setReviewError,
+    handleDeleteReview,
     sortBy,
     setSortBy,
-    isSubmitting,
     isDeleting,
-
-    // Actions
     handleSubmitReview,
-    handleDeleteReview,
+    isPokemonLoading,
   } = usePokemonPage(pokemonId);
 
-  // State for modal control
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'update'>('add');
   const [reviewText, setReviewText] = useState('');
 
-  // UI handlers
+  // press add review button
   const handleAddReview = () => {
     setReviewText('');
     setModalMode('add');
     setShowModal(true);
   };
-
+// press update review button
   const handleUpdateReview = () => {
     if (userReview) {
       setReviewText(userReview.review);
@@ -60,7 +50,7 @@ export default function PokemonViewPage() {
       setShowModal(true);
     }
   };
-
+// submit review for add or update
   const submitReview = async () => {
     const success = await handleSubmitReview(reviewText, modalMode);
     if (success) {
@@ -166,7 +156,7 @@ export default function PokemonViewPage() {
             </div>
           )}
 
-          {/* Sort controls */}
+         
           <div className="mb-4 flex items-center">
             <label htmlFor="sort-select" className="mr-2">
               Sort by:
@@ -183,7 +173,7 @@ export default function PokemonViewPage() {
           </div>
         </section>
 
-        {/* Reviews list */}
+        
         <section className="space-y-4">
           {isReviewsLoading ? (
             <p className="text-center py-2">Loading reviews...</p>
@@ -213,7 +203,7 @@ export default function PokemonViewPage() {
         </section>
       </div>
 
-      {/* Modal for adding/updating review */}
+      
       <Modal open={showModal} onClose={() => setShowModal(false)}>
         <div className="mb-4">
           <label

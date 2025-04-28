@@ -26,25 +26,20 @@ export type SortOption = 'date' | 'username';
 export function usePokemonPage(pokemonId: string | undefined) {
   const supabase = createClient();
   
-  // User state
-  const [user, setUser] = useState<any>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
-  
-  // Pokemon state
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [isPokemonLoading, setIsPokemonLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const [pokemonError, setPokemonError] = useState<string | null>(null);
-  
-  // Reviews state
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [userReview, setUserReview] = useState<Review | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const [reviewError, setReviewError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>('date');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPokemonLoading, setIsPokemonLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>('date');
 
-  // Get current user
+  // get current user
   useEffect(() => {
     async function getUser() {
       setIsUserLoading(true);
@@ -60,7 +55,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
     getUser();
   }, [supabase]);
 
-  // Fetch Pokemon details
+  // fetch Pokemon details
   useEffect(() => {
     if (!pokemonId) return;
 
@@ -95,7 +90,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
     fetchPokemonDetails();
   }, [pokemonId]);
 
-  // Fetch reviews for this Pokemon
+  // fetch reviews for this Pokemon
   useEffect(() => {
     if (!pokemon) return;
 
@@ -104,7 +99,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
       if (!pokemon){}
 
       try {
-        // Get all reviews for this Pokemon with username from profiles table
+        // get all reviews for this Pokemon with username from profiles table
         const { data, error: fetchError } = await supabase
           .from('pokemon_reviews')
           .select(`
@@ -117,7 +112,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
           throw new Error(fetchError.message);
         }
 
-        // Format the data to include username
+        // format object to include username
         const formattedReviews = data.map(review => ({
           ...review,
           username: review.profiles?.username || 'Unknown User'
@@ -125,7 +120,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
 
         setReviews(formattedReviews);
 
-        // Check if the current user has a review
+        // hheck if current user has a review
         if (user) {
           const userReview = formattedReviews.find(
             (review) => review.profile_id === user.id
@@ -143,7 +138,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
     fetchReviews();
   }, [pokemon, user, supabase]);
 
-  // Handle submitting a review (either add or update)
+  // handle submitting a review (add or update)
   const handleSubmitReview = async (reviewText: string, modalMode: 'add' | 'update') => {
     if (!reviewText.trim()) {
       setReviewError('Review text cannot be empty');
@@ -158,7 +153,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
 
     try {
       if (modalMode === 'add') {
-        // Add new review
+        // add new review
         const { data, error: addError } = await supabase
           .from('pokemon_reviews')
           .insert([
@@ -188,7 +183,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
           setReviews([newReview, ...reviews]);
         }
       } else {
-        // Update existing review
+        // update existing review
         if (!userReview) return false;
 
         const { data, error: updateError } = await supabase
@@ -215,7 +210,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
           
           setUserReview(updatedReview);
           
-          // Update the review in the reviews array
+          // update the review in the reviews array
           const updatedReviews = reviews.map((review) =>
             review.review_id === userReview.review_id ? updatedReview : review
           );
@@ -234,7 +229,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
     }
   };
 
-  // Handle deleting a review
+  // handle deleting a review
   const handleDeleteReview = async () => {
     if (!userReview) return false;
     
@@ -265,7 +260,7 @@ export function usePokemonPage(pokemonId: string | undefined) {
     }
   };
 
-  // Sort reviews based on selected option
+  // sort reviews based on selected option
   const getSortedReviews = () => {
     return [...reviews].sort((a, b) => {
       if (sortBy === 'date') {
@@ -276,30 +271,22 @@ export function usePokemonPage(pokemonId: string | undefined) {
     });
   };
 
-  // Return everything needed by the page
   return {
-    // User
     user,
     isUserLoading,
-    
-    // Pokemon
-    pokemon,
-    isPokemonLoading,
-    pokemonError,
-    
-    // Reviews
-    reviews: getSortedReviews(),
-    userReview,
-    isReviewsLoading,
-    reviewError,
-    setReviewError,
-    sortBy,
-    setSortBy,
     isSubmitting,
-    isDeleting,
-    
-    // Actions
+    isReviewsLoading,
+    pokemon,
+    isDeleting,    
+    isPokemonLoading,
     handleSubmitReview,
-    handleDeleteReview
+    pokemonError,
+    sortBy,
+    handleDeleteReview,
+    userReview,
+    reviewError,
+    reviews: getSortedReviews(),
+    setReviewError,
+    setSortBy,
   };
 }

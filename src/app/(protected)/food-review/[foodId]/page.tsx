@@ -12,36 +12,36 @@ export default function FoodViewPage() {
   const foodId = params.foodId?.toString();
 
   const {
-    foodInfo,
-    foodName,
-    setFoodName,
     showModal,
+    setFoodName,
+    foodName,
     setShowModal,
     isProcessing,
     modalMode,
     error,
-    setError,
-    isReviewsLoading,
-    comment,
-    setComment,
-    sortBy,
-    setSortBy,
+    updateReview,
+    foodInfo,
     user,
+    setError,
+    handleAddReview,
+    isReviewsLoading,
+    setComment,
+    confirmUpdate,
+    setSortBy,
+    handleUpdateReview,
+    comment,
+    submitReview,
+    handleDeleteBtn,
     userReview,
+    sortBy,
+    handleDeleteFood,
     sortedReviews,
     isOwner,
+    deleteReview,
+    handleDeleteReview,
     isLoading,
     notFound,
     handleUpdateBtn,
-    handleDeleteBtn,
-    confirmUpdate,
-    handleDeleteFood,
-    handleAddReview,
-    handleUpdateReview,
-    handleDeleteReview,
-    submitReview,
-    updateReview,
-    deleteReview,
   } = useFood(foodId);
 
   if (isLoading) {
@@ -79,7 +79,6 @@ export default function FoodViewPage() {
     <Container>
       <div className="bg-white p-5 rounded flex flex-col mb-20">
         <section className="bg-gray-200 flex flex-col items-center justify-center text-center mb-5 p-5 rounded">
-          {/* Show update/delete buttons only if user is the owner */}
           {isOwner && (
             <div className="flex flex-row gap-2 self-end mb-4">
               <button
@@ -161,7 +160,7 @@ export default function FoodViewPage() {
             </div>
           )}
 
-          {/* Sort controls */}
+         
           <div className="mb-4 flex items-center">
             <label htmlFor="sort-select" className="mr-2">
               Sort by:
@@ -178,7 +177,7 @@ export default function FoodViewPage() {
           </div>
         </section>
 
-        {/* Reviews list */}
+    
         <section className="space-y-4">
           {isReviewsLoading ? (
             <p className="text-center py-2">Loading reviews...</p>
@@ -208,7 +207,7 @@ export default function FoodViewPage() {
         </section>
       </div>
 
-      {/* Modal for Update/Delete/Other Actions */}
+    
       <Modal open={showModal} onClose={() => setShowModal(false)}>
         {modalMode === 'UpdateInfo' && (
           <>

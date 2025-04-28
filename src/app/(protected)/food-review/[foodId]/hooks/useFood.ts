@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
+// food details for page
 type Food = {
   image_url: string;
   food_name: string;
   profile_id: string;
 };
-
+// reviews table
 type Review = {
   review_id: string;
   food_id: string;
@@ -17,7 +18,7 @@ type Review = {
   updated_at: string;
   username: string;
 };
-
+// modal type for every button
 type ModalMode =
   | 'UpdateInfo'
   | 'DeleteInfo'
@@ -28,40 +29,38 @@ type ModalMode =
 export function useFood(foodId: string | undefined) {
   const router = useRouter();
   const supabase = createClient();
+  const now = new Date().toISOString();
 
-  // Food state
-  const [foodInfo, setFoodInfo] = useState<Food | null>(null);
-  const [foodName, setFoodName] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
 
-  // UI state
-  const [showModal, setShowModal] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [modalMode, setModalMode] = useState<ModalMode>('AddReview');
-  const [error, setError] = useState<string | null>(null);
-
-  // Review state
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const [comment, setComment] = useState('');
   const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'date' | 'username'>('date');
+  const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState<{ id: string } | null>(null);
+  const [modalMode, setModalMode] = useState<ModalMode>('AddReview');
+  const [foodInfo, setFoodInfo] = useState<Food | null>(null);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
   const [userReview, setUserReview] = useState<Review | null>(null);
-
-  // Food operations
+  const [error, setError] = useState<string | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [foodName, setFoodName] = useState('');
+  const [sortBy, setSortBy] = useState<'date' | 'username'>('date');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // moved all press actions here for food item
+  //press food item update button
   const handleUpdateBtn = () => {
     setFoodName(foodInfo?.food_name || '');
     setModalMode('UpdateInfo');
     setShowModal(true);
   };
-
+ //press food item delete button
   const handleDeleteBtn = () => {
     setModalMode('DeleteInfo');
     setShowModal(true);
   };
-
+// confirm update function for food item
   const confirmUpdate = async () => {
     if (!foodName.trim()) {
       setError('Title is required');
@@ -97,13 +96,13 @@ export function useFood(foodId: string | undefined) {
       router.refresh();
     }
   };
-
+// function to delete food item
   const handleDeleteFood = async () => {
     if (!foodInfo || !foodId) return;
 
     try {
       setIsProcessing(true);
-      // Extract the path after "public/food-imgs/"
+      // extract path
       const publicUrl = foodInfo.image_url;
       const pathInBucket = publicUrl.split(
         '/storage/v1/object/public/food-imgs/'
@@ -114,7 +113,7 @@ export function useFood(foodId: string | undefined) {
         return;
       }
 
-      // Delete the image from Supabase Storage
+      // delete image from Supabase Storage
       const { error: storageError } = await supabase.storage
         .from('food-imgs')
         .remove([pathInBucket]);
@@ -124,7 +123,7 @@ export function useFood(foodId: string | undefined) {
         return;
       }
 
-      // Delete the food record from database
+      // delete the food item in foods table
       const { error: dbError } = await supabase
         .from('foods')
         .delete()
@@ -143,13 +142,14 @@ export function useFood(foodId: string | undefined) {
     }
   };
 
-  // Review operations
+  // review operations
+  // press add review button
   const handleAddReview = () => {
     setComment('');
     setModalMode('AddReview');
     setShowModal(true);
   };
-
+// press update review button
   const handleUpdateReview = () => {
     if (userReview) {
       setComment(userReview.comment);
@@ -158,7 +158,7 @@ export function useFood(foodId: string | undefined) {
       setShowModal(true);
     }
   };
-
+// press delete review button
   const handleDeleteReview = () => {
     if (userReview) {
       setCurrentReviewId(userReview.review_id);
@@ -166,7 +166,7 @@ export function useFood(foodId: string | undefined) {
       setShowModal(true);
     }
   };
-
+// function for submitting new review
   const submitReview = async () => {
     if (!comment.trim()) {
       setError('Review comment is required');
@@ -195,7 +195,6 @@ export function useFood(foodId: string | undefined) {
         console.error('Error adding review:', error);
         setError('Failed to add review');
       } else {
-        // Transform the data to match our Review type
         const newReview: Review = {
           review_id: data[0].review_id,
           food_id: data[0].food_id,
@@ -207,7 +206,7 @@ export function useFood(foodId: string | undefined) {
         };
 
         setReviews([newReview, ...reviews]);
-        setUserReview(newReview); // Set the user's review
+        setUserReview(newReview); 
         setShowModal(false);
       }
     } catch (err) {
@@ -218,6 +217,7 @@ export function useFood(foodId: string | undefined) {
     }
   };
 
+// function for updating a review
   const updateReview = async () => {
     if (!comment.trim()) {
       setError('Review comment is required');
@@ -235,35 +235,35 @@ export function useFood(foodId: string | undefined) {
     try {
       const { data, error } = await supabase
         .from('food_reviews')
-        .update({ comment: comment, updated_at: new Date().toISOString() })
+        .update({ comment: comment, updated_at: now })
         .eq('review_id', currentReviewId)
-        .eq('profile_id', user.id) // Security: ensure user owns this review
+        .eq('profile_id', user.id) 
         .select();
 
       if (error) {
         console.error('Error updating review:', error);
         setError('Failed to update review');
       } else {
-        // Update the review in our local state
+        
         const updatedReviews = reviews.map((review) =>
           review.review_id === currentReviewId
             ? {
                 ...review,
                 comment: comment,
-                updated_at: new Date().toISOString(),
+                updated_at: now,
               }
             : review
         );
 
         setReviews(updatedReviews);
 
-        // Update userReview state as well
+        
         setUserReview((prevUserReview) => {
           if (prevUserReview && prevUserReview.review_id === currentReviewId) {
             return {
               ...prevUserReview,
               comment: comment,
-              updated_at: new Date().toISOString(),
+              updated_at: now,
             };
           }
           return prevUserReview;
@@ -278,7 +278,7 @@ export function useFood(foodId: string | undefined) {
       setIsProcessing(false);
     }
   };
-
+// function to delete users review
   const deleteReview = async () => {
     if (!currentReviewId || !user) {
       return;
@@ -291,16 +291,16 @@ export function useFood(foodId: string | undefined) {
         .from('food_reviews')
         .delete()
         .eq('review_id', currentReviewId)
-        .eq('profile_id', user.id); // Security: ensure user owns this review
+        .eq('profile_id', user.id); 
 
       if (error) {
         console.error('Error deleting review:', error);
       } else {
-        // Remove the review from our local state
+        
         setReviews(
           reviews.filter((review) => review.review_id !== currentReviewId)
         );
-        setUserReview(null); // Clear the user review after deletion
+        setUserReview(null); 
         setShowModal(false);
       }
     } catch (err) {
@@ -310,7 +310,7 @@ export function useFood(foodId: string | undefined) {
     }
   };
 
-  // Data fetching
+  // get user
   useEffect(() => {
     const checkUser = async () => {
       const {
@@ -324,6 +324,7 @@ export function useFood(foodId: string | undefined) {
     checkUser();
   }, []);
 
+  //fetch food item information
   useEffect(() => {
     const fetchFood = async () => {
       if (!foodId) {
@@ -353,6 +354,7 @@ export function useFood(foodId: string | undefined) {
     fetchFood();
   }, [foodId]);
 
+  //fetch reviews
   useEffect(() => {
     const fetchReviews = async () => {
       if (!foodId) return;
@@ -373,7 +375,6 @@ export function useFood(foodId: string | undefined) {
         if (error) {
           console.error('Error fetching reviews:', error);
         } else {
-          // Transform the data to match our Review type
           const formattedReviews = data.map((item) => ({
             review_id: item.review_id,
             food_id: item.food_id,
@@ -386,7 +387,6 @@ export function useFood(foodId: string | undefined) {
 
           setReviews(formattedReviews);
 
-          // Find and set the current user's review if it exists
           if (user) {
             const userReview = formattedReviews.find(
               (review) => review.profile_id === user.id
@@ -406,7 +406,7 @@ export function useFood(foodId: string | undefined) {
     }
   }, [foodId, user]);
 
-  // Get sorted reviews
+ //sorting the reviews
   const sortedReviews = [...reviews].sort((a, b) => {
     if (sortBy === 'date') {
       return (
@@ -417,43 +417,40 @@ export function useFood(foodId: string | undefined) {
     }
   });
 
-  // Check if the current user is the owner of the food post
+  // check if the signed in user is the owner of the food post
   const isOwner = user && foodInfo && user.id === foodInfo.profile_id;
 
   return {
-    // State
-    foodInfo,
     foodName,
-    setFoodName,
-    showModal,
-    setShowModal,
+    user,
     isProcessing,
+    handleAddReview,
     modalMode,
+    setFoodName,
+    foodInfo,
+    submitReview,
     error,
     setError,
     isReviewsLoading,
+    handleUpdateReview,
+    confirmUpdate,
+    showModal,
     comment,
     setComment,
     sortBy,
-    setSortBy,
-    user,
+    handleUpdateBtn,
     userReview,
-    sortedReviews,
+    setSortBy,
+    updateReview,
     isOwner,
     isLoading,
+    sortedReviews,
+    setShowModal,
     notFound,
-
-    // Functions
-    handleUpdateBtn,
     handleDeleteBtn,
-    confirmUpdate,
-    handleDeleteFood,
-    handleAddReview,
-    handleUpdateReview,
     handleDeleteReview,
-    submitReview,
-    updateReview,
     deleteReview,
+    handleDeleteFood,
   };
 }
 
