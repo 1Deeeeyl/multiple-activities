@@ -1,322 +1,460 @@
-// hooks/useFood.ts
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { useFood as useFoodContext } from '@/context/FoodContext';
 
-// Define types
-export type Food = {
-  id: string;
-  food_name: string;
+type Food = {
   image_url: string;
-  description?: string;
-  created_at: string;
-  updated_at?: string;
-  user_id: string;
+  food_name: string;
+  profile_id: string;
 };
 
-export type Review = {
+type Review = {
   review_id: string;
   food_id: string;
   profile_id: string;
-  review: string;
+  comment: string;
   created_at: string;
   updated_at: string;
-  username?: string; // From profiles table join
+  username: string;
 };
 
-export type SortOption = 'date' | 'username';
+type ModalMode =
+  | 'UpdateInfo'
+  | 'DeleteInfo'
+  | 'AddReview'
+  | 'UpdateReview'
+  | 'DeleteReview';
 
-export function useFoodPage(foodId: string | undefined) {
+export function useFood(foodId: string | undefined) {
+  const router = useRouter();
   const supabase = createClient();
-  
-  // Safely try to use food context, but handle case where it's not available
-  let contextFoods: any[] = [];
-  try {
-    const { foods } = useFoodContext();
-    contextFoods = foods;
-  } catch (error) {
-    // Context not available, will fetch directly from database
-    console.log('FoodContext not available, will fetch from database');
-  }
-  
-  // User state
-  const [user, setUser] = useState<any>(null);
-  const [isUserLoading, setIsUserLoading] = useState(true);
-  
+
   // Food state
-  const [food, setFood] = useState<Food | null>(null);
-  const [isFoodLoading, setIsFoodLoading] = useState(true);
-  const [foodError, setFoodError] = useState<string | null>(null);
-  
-  // Reviews state
+  const [foodInfo, setFoodInfo] = useState<Food | null>(null);
+  const [foodName, setFoodName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  // UI state
+  const [showModal, setShowModal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>('AddReview');
+  const [error, setError] = useState<string | null>(null);
+
+  // Review state
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [userReview, setUserReview] = useState<Review | null>(null);
   const [isReviewsLoading, setIsReviewsLoading] = useState(true);
-  const [reviewError, setReviewError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>('date');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [comment, setComment] = useState('');
+  const [currentReviewId, setCurrentReviewId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'date' | 'username'>('date');
+  const [user, setUser] = useState<{ id: string } | null>(null);
+  const [userReview, setUserReview] = useState<Review | null>(null);
 
-  // Get current user
-  useEffect(() => {
-    async function getUser() {
-      setIsUserLoading(true);
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
-      }
-      setIsUserLoading(false);
+  // Food operations
+  const handleUpdateBtn = () => {
+    setFoodName(foodInfo?.food_name || '');
+    setModalMode('UpdateInfo');
+    setShowModal(true);
+  };
+
+  const handleDeleteBtn = () => {
+    setModalMode('DeleteInfo');
+    setShowModal(true);
+  };
+
+  const confirmUpdate = async () => {
+    if (!foodName.trim()) {
+      setError('Title is required');
+      return;
     }
-    
-    getUser();
-  }, [supabase]);
 
-  // Fetch Food details
-  useEffect(() => {
+    setError(null);
     if (!foodId) return;
 
-    async function fetchFoodDetails() {
-      setIsFoodLoading(true);
-      try {
-        // First check if the food is in context (if context is available)
-        const contextFood = contextFoods?.find?.(f => f.id === foodId);
-        
-        if (contextFood && contextFood.id && contextFood.user_id) {
-          setFood(contextFood);
-        } else {
-          // If not in context or context not available, fetch from database
-          const { data, error } = await supabase
-            .from('foods')
-            .select('*')
-            .eq('id', foodId)
-            .single();
-            
-          if (error) {
-            throw new Error('Food not found');
-          }
-          
-          // Ensure the data has all required fields
-          if (data && data.id && data.user_id) {
-            setFood(data);
-          } else {
-            throw new Error('Food data is incomplete');
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching food:', err);
-        setFoodError('Failed to load food details');
-      } finally {
-        setIsFoodLoading(false);
+    try {
+      setIsProcessing(true);
+
+      const { data, error } = await supabase
+        .from('foods')
+        .update({ food_name: foodName })
+        .eq('food_id', foodId)
+        .select();
+
+      if (!error && data && data.length > 0) {
+        setFoodInfo((prevState) => {
+          if (!prevState) return null;
+          return {
+            ...prevState,
+            food_name: foodName,
+          };
+        });
       }
+    } catch (err) {
+      console.error('Error updating food:', err);
+    } finally {
+      setIsProcessing(false);
+      setShowModal(false);
+      router.refresh();
+    }
+  };
+
+  const handleDeleteFood = async () => {
+    if (!foodInfo || !foodId) return;
+
+    try {
+      setIsProcessing(true);
+      // Extract the path after "public/food-imgs/"
+      const publicUrl = foodInfo.image_url;
+      const pathInBucket = publicUrl.split(
+        '/storage/v1/object/public/food-imgs/'
+      )[1];
+
+      if (!pathInBucket) {
+        console.error('Could not extract image path from URL.');
+        return;
+      }
+
+      // Delete the image from Supabase Storage
+      const { error: storageError } = await supabase.storage
+        .from('food-imgs')
+        .remove([pathInBucket]);
+
+      if (storageError) {
+        console.error('Error deleting from storage:', storageError);
+        return;
+      }
+
+      // Delete the food record from database
+      const { error: dbError } = await supabase
+        .from('foods')
+        .delete()
+        .eq('food_id', foodId);
+
+      if (dbError) {
+        console.error('Error deleting from database:', dbError);
+        return;
+      }
+      setIsProcessing(false);
+      router.push('/food-review'); // Redirect after deletion
+
+      console.log('Successfully deleted food and its image!');
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  };
+
+  // Review operations
+  const handleAddReview = () => {
+    setComment('');
+    setModalMode('AddReview');
+    setShowModal(true);
+  };
+
+  const handleUpdateReview = () => {
+    if (userReview) {
+      setComment(userReview.comment);
+      setCurrentReviewId(userReview.review_id);
+      setModalMode('UpdateReview');
+      setShowModal(true);
+    }
+  };
+
+  const handleDeleteReview = () => {
+    if (userReview) {
+      setCurrentReviewId(userReview.review_id);
+      setModalMode('DeleteReview');
+      setShowModal(true);
+    }
+  };
+
+  const submitReview = async () => {
+    if (!comment.trim()) {
+      setError('Review comment is required');
+      return;
     }
 
-    fetchFoodDetails();
-  }, [foodId, contextFoods, supabase]);
+    if (!foodId || !user) {
+      setError('You must be logged in to submit a review');
+      return;
+    }
 
-  // Fetch reviews for this Food
+    setError(null);
+    setIsProcessing(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('food_reviews')
+        .insert({
+          food_id: foodId,
+          profile_id: user.id,
+          comment: comment,
+        })
+        .select('*, profiles(username)');
+
+      if (error) {
+        console.error('Error adding review:', error);
+        setError('Failed to add review');
+      } else {
+        // Transform the data to match our Review type
+        const newReview: Review = {
+          review_id: data[0].review_id,
+          food_id: data[0].food_id,
+          profile_id: data[0].profile_id,
+          comment: data[0].comment,
+          created_at: data[0].created_at,
+          updated_at: data[0].updated_at,
+          username: data[0].profiles.username,
+        };
+
+        setReviews([newReview, ...reviews]);
+        setUserReview(newReview); // Set the user's review
+        setShowModal(false);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const updateReview = async () => {
+    if (!comment.trim()) {
+      setError('Review comment is required');
+      return;
+    }
+
+    if (!currentReviewId || !user) {
+      setError('Something went wrong');
+      return;
+    }
+
+    setError(null);
+    setIsProcessing(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('food_reviews')
+        .update({ comment: comment, updated_at: new Date().toISOString() })
+        .eq('review_id', currentReviewId)
+        .eq('profile_id', user.id) // Security: ensure user owns this review
+        .select();
+
+      if (error) {
+        console.error('Error updating review:', error);
+        setError('Failed to update review');
+      } else {
+        // Update the review in our local state
+        const updatedReviews = reviews.map((review) =>
+          review.review_id === currentReviewId
+            ? {
+                ...review,
+                comment: comment,
+                updated_at: new Date().toISOString(),
+              }
+            : review
+        );
+
+        setReviews(updatedReviews);
+
+        // Update userReview state as well
+        setUserReview((prevUserReview) => {
+          if (prevUserReview && prevUserReview.review_id === currentReviewId) {
+            return {
+              ...prevUserReview,
+              comment: comment,
+              updated_at: new Date().toISOString(),
+            };
+          }
+          return prevUserReview;
+        });
+
+        setShowModal(false);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const deleteReview = async () => {
+    if (!currentReviewId || !user) {
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const { error } = await supabase
+        .from('food_reviews')
+        .delete()
+        .eq('review_id', currentReviewId)
+        .eq('profile_id', user.id); // Security: ensure user owns this review
+
+      if (error) {
+        console.error('Error deleting review:', error);
+      } else {
+        // Remove the review from our local state
+        setReviews(
+          reviews.filter((review) => review.review_id !== currentReviewId)
+        );
+        setUserReview(null); // Clear the user review after deletion
+        setShowModal(false);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Data fetching
   useEffect(() => {
-    if (!food) return;
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUser({ id: user.id });
+      }
+    };
 
-    async function fetchReviews() {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchFood = async () => {
+      if (!foodId) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      const { data: foodData, error } = await supabase
+        .from('foods')
+        .select('image_url, food_name, profile_id')
+        .eq('food_id', foodId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching food:', error);
+        setNotFound(true);
+      } else {
+        setFoodInfo(foodData);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchFood();
+  }, [foodId]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!foodId) return;
+
       setIsReviewsLoading(true);
 
       try {
-        // Get all reviews for this Food with username from profiles table
-        const { data, error: fetchError } = await supabase
+        const { data, error } = await supabase
           .from('food_reviews')
-          .select(`
+          .select(
+            `
             *,
             profiles:profile_id (username)
-          `)
-          .eq('food_id', food!.id);
+          `
+          )
+          .eq('food_id', foodId);
 
-        if (fetchError) {
-          throw new Error(fetchError.message);
-        }
+        if (error) {
+          console.error('Error fetching reviews:', error);
+        } else {
+          // Transform the data to match our Review type
+          const formattedReviews = data.map((item) => ({
+            review_id: item.review_id,
+            food_id: item.food_id,
+            profile_id: item.profile_id,
+            comment: item.comment,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            username: item.profiles.username,
+          }));
 
-        // Format the data to include username
-        const formattedReviews = data.map(review => ({
-          ...review,
-          username: review.profiles?.username || 'Unknown User'
-        }));
+          setReviews(formattedReviews);
 
-        setReviews(formattedReviews);
-
-        // Check if the current user has a review
-        if (user) {
-          const userReview = formattedReviews.find(
-            (review) => review.profile_id === user.id
-          );
-          setUserReview(userReview || null);
+          // Find and set the current user's review if it exists
+          if (user) {
+            const userReview = formattedReviews.find(
+              (review) => review.profile_id === user.id
+            );
+            setUserReview(userReview || null);
+          }
         }
       } catch (err) {
-        console.error('Error fetching reviews:', err);
-        setReviewError('Failed to load reviews');
+        console.error('Unexpected error:', err);
       } finally {
         setIsReviewsLoading(false);
       }
+    };
+
+    if (user) {
+      fetchReviews();
     }
+  }, [foodId, user]);
 
-    fetchReviews();
-  }, [food, user, supabase]);
-
-  // Handle submitting a review (either add or update)
-  const handleSubmitReview = async (reviewText: string, modalMode: 'add' | 'update') => {
-    if (!reviewText.trim()) {
-      setReviewError('Review text cannot be empty');
-      return false;
-    }
-
-    if (!user || !food) return false;
-
-    setIsSubmitting(true);
-    setReviewError(null);
-    const now = new Date().toISOString();
-
-    try {
-      if (modalMode === 'add') {
-        // Add new review
-        const { data, error: addError } = await supabase
-          .from('food_reviews')
-          .insert([
-            {
-              food_id: food.id,
-              profile_id: user.id,
-              review: reviewText,
-              created_at: now,
-              updated_at: now,
-            },
-          ])
-          .select(`
-            *,
-            profiles:profile_id (username)
-          `);
-
-        if (addError) {
-          throw new Error(addError.message);
-        }
-
-        if (data && data.length > 0) {
-          const newReview = {
-            ...data[0],
-            username: data[0].profiles?.username || 'Unknown User'
-          };
-          setUserReview(newReview);
-          setReviews([newReview, ...reviews]);
-        }
-      } else {
-        // Update existing review
-        if (!userReview) return false;
-
-        const { data, error: updateError } = await supabase
-          .from('food_reviews')
-          .update({
-            review: reviewText,
-            updated_at: now,
-          })
-          .eq('review_id', userReview.review_id)
-          .select(`
-            *,
-            profiles:profile_id (username)
-          `);
-
-        if (updateError) {
-          throw new Error(updateError.message);
-        }
-
-        if (data && data.length > 0) {
-          const updatedReview = {
-            ...data[0],
-            username: data[0].profiles?.username || 'Unknown User'
-          };
-          
-          setUserReview(updatedReview);
-          
-          // Update the review in the reviews array
-          const updatedReviews = reviews.map((review) =>
-            review.review_id === userReview.review_id ? updatedReview : review
-          );
-          
-          setReviews(updatedReviews);
-        }
-      }
-
-      return true;
-    } catch (err) {
-      console.error('Error submitting review:', err);
-      setReviewError(`Failed to ${modalMode} review`);
-      return false;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Handle deleting a review
-  const handleDeleteReview = async () => {
-    if (!userReview) return false;
-    
-    setIsDeleting(true);
-    try {
-      const { error: deleteError } = await supabase
-        .from('food_reviews')
-        .delete()
-        .eq('review_id', userReview.review_id);
-
-      if (deleteError) {
-        throw new Error(deleteError.message);
-      }
-
-      // Refresh reviews
-      setUserReview(null);
-      const updatedReviews = reviews.filter(
-        (review) => review.review_id !== userReview.review_id
+  // Get sorted reviews
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (sortBy === 'date') {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
-      setReviews(updatedReviews);
-      return true;
-    } catch (err) {
-      console.error('Error deleting review:', err);
-      setReviewError('Failed to delete review');
-      return false;
-    } finally {
-      setIsDeleting(false);
+    } else {
+      return a.username.localeCompare(b.username);
     }
-  };
+  });
 
-  // Sort reviews based on selected option
-  const getSortedReviews = () => {
-    return [...reviews].sort((a, b) => {
-      if (sortBy === 'date') {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      } else {
-        return (a.username || '').localeCompare(b.username || '');
-      }
-    });
-  };
+  // Check if the current user is the owner of the food post
+  const isOwner = user && foodInfo && user.id === foodInfo.profile_id;
 
-  // Return everything needed by the page
   return {
-    // User
-    user,
-    isUserLoading,
-    
-    // Food
-    food,
-    isFoodLoading,
-    foodError,
-    
-    // Reviews
-    reviews: getSortedReviews(),
-    userReview,
+    // State
+    foodInfo,
+    foodName,
+    setFoodName,
+    showModal,
+    setShowModal,
+    isProcessing,
+    modalMode,
+    error,
+    setError,
     isReviewsLoading,
-    reviewError,
-    setReviewError,
+    comment,
+    setComment,
     sortBy,
     setSortBy,
-    isSubmitting,
-    isDeleting,
-    
-    // Actions
-    handleSubmitReview,
-    handleDeleteReview
+    user,
+    userReview,
+    sortedReviews,
+    isOwner,
+    isLoading,
+    notFound,
+
+    // Functions
+    handleUpdateBtn,
+    handleDeleteBtn,
+    confirmUpdate,
+    handleDeleteFood,
+    handleAddReview,
+    handleUpdateReview,
+    handleDeleteReview,
+    submitReview,
+    updateReview,
+    deleteReview,
   };
 }
+
+export type { Food, Review, ModalMode };

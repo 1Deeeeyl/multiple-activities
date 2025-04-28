@@ -5,6 +5,7 @@ import Container from '@/components/container/Container';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Modal from '@/components/modal/Modal';
+import Link from 'next/link';
 
 // Import consolidated hook
 import { usePokemonPage } from './hooks/usePokemon';
@@ -80,8 +81,19 @@ export default function PokemonViewPage() {
   if (pokemonError || !pokemon) {
     return (
       <Container>
-        <div className="text-center py-8">
-          <p className="text-xl">{pokemonError || 'Pokémon not found'}</p>
+        <div className="flex flex-col justify-center items-center min-h-[50vh]">
+          <h2 className="text-xl font-bold text-red-500 mb-2">
+          {pokemonError}
+          </h2>
+          <p className="text-gray-700">
+          The Pokémon you are looking for is not on the Pokédex database.
+          </p>
+          <Link
+            href="/pokemon-review"
+            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          >
+            Back to Pokémon Reviews
+          </Link>
         </div>
       </Container>
     );

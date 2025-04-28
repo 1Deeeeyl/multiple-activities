@@ -134,7 +134,7 @@ export default function FileInputFood() {
           </div>
           <div className="flex justify-end gap-2 mt-4">
             <button
-              type="submit"
+              type="button"
               onClick={() => setOpen(false)}
               className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
               disabled={isProcessing}
@@ -142,11 +142,11 @@ export default function FileInputFood() {
               Cancel
             </button>
             <button
-              type="button"
+              type="submit"
               className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
               disabled={isProcessing || !foodName.trim()}
             >
-              {isProcessing ? 'Updating...' : 'Update'}
+              {isProcessing ? 'Uploading...' : 'Upload'}
             </button>
           </div>
         </form>
