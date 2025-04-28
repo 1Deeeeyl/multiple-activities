@@ -49,7 +49,7 @@ const Page = () => {
         email,
         password,
         options: {
-          emailRedirectTo: 'http://localhost:3000/auth/confirm?next=/private',
+          emailRedirectTo: 'https://multiple-activities-ten.vercel.app/auth/confirm?next=/private',
           data: {
             username: username, // Store username in user metadata
           },
