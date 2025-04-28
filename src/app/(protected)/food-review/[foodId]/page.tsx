@@ -422,7 +422,7 @@ export default function FoodViewPage() {
 
   return (
     <Container>
-      <div className="bg-white p-5 rounded flex flex-col">
+      <div className="bg-white p-5 rounded flex flex-col mb-20">
         <section className="bg-gray-200 flex flex-col items-center justify-center text-center mb-5 p-5 rounded">
           {/* Show update/delete buttons only if user is the owner */}
           {isOwner && (
@@ -555,12 +555,8 @@ export default function FoodViewPage() {
 
       {/* Modal for Update/Delete/Other Actions */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <div className="p-5">
           {modalMode === 'UpdateInfo' && (
             <>
-              <h2 className="text-xl font-bold mb-4">
-                Update Food Information
-              </h2>
               <div className="mb-4">
                 <label
                   htmlFor="foodName"
@@ -576,6 +572,8 @@ export default function FoodViewPage() {
                   id="foodName"
                   className="w-full p-2 border rounded"
                   disabled={isProcessing}
+                  onKeyDown={(e) => e.key === 'Enter' && confirmUpdate()}
+
                 />
               </div>
               {error && (
@@ -677,7 +675,6 @@ export default function FoodViewPage() {
 
           {modalMode === 'UpdateReview' && (
             <>
-              <h2 className="text-xl font-bold mb-4">Update Review</h2>
               <div className="mb-4">
                 <label
                   htmlFor="reviewComment"
@@ -712,7 +709,7 @@ export default function FoodViewPage() {
                 <button
                   type="button"
                   onClick={updateReview}
-                  className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-blue-300"
+                  className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
                   disabled={isProcessing || !comment.trim()}
                 >
                   {isProcessing ? 'Updating...' : 'Update'}
@@ -744,7 +741,6 @@ export default function FoodViewPage() {
               </div>
             </>
           )}
-        </div>
       </Modal>
     </Container>
   );

@@ -82,7 +82,7 @@ export default function FileInput() {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors mt-[5px]"
+          className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors mt-[5px] disabled:bg-green-300"
           disabled={!file || isUploading}
         >
           {isUploading ? 'Uploading...' : 'Upload File'}

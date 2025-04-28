@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, ChangeEvent, FormEvent } from 'react';
-import Modal from '../modal/Modal';
+import Modal from '../../modal/Modal';
 import { useFood } from '@/context/FoodContext';
 
 export default function FileInputFood() {
@@ -8,6 +8,7 @@ export default function FileInputFood() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [foodName, setFoodName] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
 
@@ -47,6 +48,7 @@ export default function FileInputFood() {
     }
 
     try {
+      setIsProcessing(true);
       // Upload the file and create the food entry
       await uploadFood(file, foodName);
 
@@ -58,13 +60,15 @@ export default function FileInputFood() {
     } catch (err) {
       console.error('Upload error:', err);
       setInputError('Upload failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  const handleUploadButton = ()=>{
-    setOpen(!open)
+  const handleUploadButton = () => {
+    setOpen(!open);
     setInputError(null);
-  }
+  };
 
   return (
     <>
@@ -99,7 +103,7 @@ export default function FileInputFood() {
         <button
           onClick={handleUploadButton}
           type="button"
-          className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors mt-[5px]"
+          className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors mt-[5px] disabled:bg-green-300"
           disabled={!file || isUploading}
         >
           {isUploading ? 'Processing...' : 'Upload Food'}
@@ -108,7 +112,6 @@ export default function FileInputFood() {
 
       <Modal open={open} onClose={() => !isUploading && setOpen(false)}>
         <form onSubmit={handleSubmit}>
-          <h2 className="text-xl font-bold mb-4">Add Food Details</h2>
 
           {inputError && (
             <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
@@ -129,15 +132,26 @@ export default function FileInputFood() {
               placeholder="Enter food name"
             />
           </div>
-          <button
-            type="submit"
-            className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3"
-            disabled={isUploading}
-          >
-            {isUploading ? 'UPLOADING...' : 'SUBMIT'}
-          </button>
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              type="submit"
+              onClick={() => setOpen(false)}
+              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+              disabled={isProcessing}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
+              disabled={isProcessing || !foodName.trim()}
+            >
+              {isProcessing ? 'Updating...' : 'Update'}
+            </button>
+          </div>
         </form>
       </Modal>
     </>
   );
 }
+

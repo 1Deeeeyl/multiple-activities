@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { MarkdownProvider } from '@/context/MarkdownContext';
 import MarkdownAddButton from '@/components/buttons/markdownAddButton/MarkdownAddButton';
-import MarkdownList from '@/components/markdownList/MarkdownList';
+import MarkdownList from '@/components/list/markdownList/MarkdownList';
 
 export const metadata: Metadata = {
   title: 'Markdown Page',
@@ -24,7 +24,7 @@ export default async function MarkdownPage() {
   return (
     <Container>
       <Hero h1="Markdown Page" description="A simple markdown page." />
-      <div className="bg-white p-5 rounded flex flex-col">
+      <div className="bg-white p-5 rounded flex flex-col mb-20">
         <MarkdownProvider user={user}>
           <MarkdownAddButton />
           <MarkdownList/>

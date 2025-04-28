@@ -20,7 +20,7 @@ function Modal({ open, onClose, children }: ModalProps) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative bg-white rounded-lg p-8 shadow-xl w-full max-w-lg mx-4 transform transition-all duration-50 ease-in-out flex flex-col
+        className={`relative bg-white rounded-lg p-8 shadow-xl w-full max-w-lg mx-4 transform transition-all duration-50 ease-in-out flex flex-col z-50
           ${open ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`}
       >
         <button

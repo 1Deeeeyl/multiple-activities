@@ -89,9 +89,9 @@ export default function PokemonViewPage() {
 
   return (
     <Container>
-      <div className="bg-white p-5 rounded flex flex-col">
+      <div className="bg-white p-5 rounded flex flex-col mb-20">
         <section className="bg-gray-200 flex flex-col items-center justify-center text-center mb-5 p-5 rounded">
-          <header>
+          <header className="text-center">
             <div className="w-48 h-48 relative">
               <Image
                 src={pokemon.image.image}
@@ -101,7 +101,7 @@ export default function PokemonViewPage() {
                 className="object-contain"
               />
             </div>
-            <div className="flex flex-col w-fit">
+            <div className="flex flex-col w-full">
               <h1 className="text-lg font-bold tracking-widest mt-5">
                 {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
               </h1>
@@ -203,49 +203,44 @@ export default function PokemonViewPage() {
 
       {/* Modal for adding/updating review */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <div className="p-1">
-          <h2 className="text-xl font-bold mb-4">
-            {modalMode === 'add' ? 'Add Review' : 'Update Review'}
-          </h2>
-          <div className="mb-4">
-            <label
-              htmlFor="review-text"
-              className="block text-sm font-medium mb-2"
-            >
-              Your Review
-            </label>
-            <textarea
-              id="review-text"
-              rows={5}
-              className="w-full p-2 border rounded resize-none"
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              disabled={isSubmitting}
-              placeholder="Share your thoughts about this Pokémon..."
-            ></textarea>
-          </div>
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={submitReview}
-              className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
-              disabled={isSubmitting || !reviewText.trim()}
-            >
-              {isSubmitting
-                ? 'Submitting...'
-                : modalMode === 'add'
-                ? 'Submit'
-                : 'Update'}
-            </button>
-          </div>
+        <div className="mb-4">
+          <label
+            htmlFor="review-text"
+            className="block text-sm font-medium mb-2"
+          >
+            Your Review
+          </label>
+          <textarea
+            id="review-text"
+            rows={5}
+            className="w-full p-2 border rounded resize-none"
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            disabled={isSubmitting}
+            placeholder="Share your thoughts about this Pokémon..."
+          ></textarea>
+        </div>
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setShowModal(false)}
+            className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={submitReview}
+            className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
+            disabled={isSubmitting || !reviewText.trim()}
+          >
+            {isSubmitting
+              ? 'Submitting...'
+              : modalMode === 'add'
+              ? 'Submit'
+              : 'Update'}
+          </button>
         </div>
       </Modal>
     </Container>

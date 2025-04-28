@@ -5,7 +5,7 @@ import Hero from '@/components/hero/Hero';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import SearchBarPokemon from '@/components/searchBarPokemon/SearchBarPokemon';
-import PokemonList from '@/components/pokemonList/PokemonList';
+import PokemonList from '@/components/list/pokemonList/PokemonList';
 import { PokemonProvider } from '@/context/PokemonContext';
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default async function PokemonPage() {
   return (
     <Container>
       <Hero h1="Pokémon Review" description="A simple Pokémon page" />
-      <div className="bg-white p-5 rounded flex flex-col justify-center items-center">
+      <div className="bg-white p-5 rounded flex flex-col justify-center items-center mb-20">
         <PokemonProvider user={user}>
           <SearchBarPokemon />
           <PokemonList />

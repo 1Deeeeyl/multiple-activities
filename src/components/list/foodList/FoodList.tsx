@@ -23,18 +23,11 @@ export default function FoodList() {
       {foods.map((food) => (
         <Link href={`/food-review/${food.food_id}`} key={food.food_id}>
           <div className="overflow-hidden shadow-2xl w-fit p-5 bg-white">
-            <div className="relative h-60 w-xs overflow-hidden rounded-xs">
-              <Image
-                src={food.image_url}
-                alt={food.food_name}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                style={{
-                  objectFit: 'cover',
-                }}
-                className="" // Optional: if you want rounded corners
-              />
-            </div>
+            <img
+              src={food.image_url}
+              alt={food.food_name}
+              className="object-cover h-[200px] w-xs overflow-hidden rounded-xs"
+            />
             <div className="p-4">
               <h3 className="font-bold text-lg">{food.food_name}</h3>
               <p className="text-sm text-gray-500">

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useMarkdown } from '@/context/MarkdownContext';
-import Modal from '../modal/Modal';
+import Modal from '@/components/modal/Modal';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 
@@ -53,7 +53,7 @@ export default function MarkdownList() {
   };
 
   const handleUpdateBtn = (id: string, title: string, body: string) => {
-    setEmpty(null); 
+    setEmpty(null);
     setOpen(!open);
     setModal('update');
     setSelectedMarkdownId(id);
@@ -86,14 +86,13 @@ export default function MarkdownList() {
     }
   };
 
-
   if (isLoading) {
     return <div className="text-center py-4">Loading markdown notes...</div>;
   }
 
-//   if (error) {
-//     return <div className="text-center py-4 text-red-500">{error}</div>;
-//   }
+  //   if (error) {
+  //     return <div className="text-center py-4 text-red-500">{error}</div>;
+  //   }
 
   if (!isLoading && markdowns.length === 0) {
     return <div className="text-center py-4">No markdown notes available.</div>;
@@ -152,24 +151,27 @@ export default function MarkdownList() {
       </section>
       <Modal open={open} onClose={() => setOpen(!open)}>
         {modal === 'delete' ? (
-          <div className="flex flex-col justify-center items-center">
-            <p>Are you sure you want to delete this markdown note?</p>
-            <div className="flex flex-row gap-5 mt-5">
-              <button
-                onClick={() => confirmDelete()}
-                className="py-2 px-5 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'DELETING...' : 'YES'}
-              </button>
-              <button
-                onClick={() => setOpen(!open)}
-                className="py-2 px-5 bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer"
-              >
-                NO
-              </button>
-            </div>
+          <>
+          <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
+          <p className="mb-6">
+            Are you sure you want to delete this markdown?
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setOpen(false)}
+              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
+              disabled={isProcessing}
+            >
+              {isProcessing ? 'Deleting...' : 'Delete'}
+            </button>
           </div>
+        </>
         ) : modal === 'view' ? (
           <>
             <div>
@@ -198,6 +200,11 @@ export default function MarkdownList() {
         ) : (
           <>
             <div className="flex flex-col gap-2">
+              {empty && (
+                <div className="bg-red-100 text-red-700 px-4 py-2 rounded mt-3">
+                  {empty}
+                </div>
+              )}
               <label htmlFor="markdownTitle">Title</label>
               <input
                 value={markdownTitle}
@@ -208,32 +215,29 @@ export default function MarkdownList() {
                 className="border rounded p-2"
                 disabled={isProcessing}
               />
-            </div>
-            <div className="flex flex-col gap-2 mt-3">
-              <label htmlFor="markdownBody">Body</label>
-              <textarea
-                value={markdownBody}
-                onChange={(e) => setMarkdownBody(e.target.value)}
-                name="markdownBody"
-                id="markdownBody"
-                className="border rounded max-h-40 p-2 resize-none overflow-y-auto text-sm"
-                disabled={isProcessing}
-                rows={5}
-              ></textarea>
-            </div>
-            {empty && (
-              <div className="bg-red-100 text-red-700 px-4 py-2 rounded mt-3">
-                {empty}
+              <div className="flex flex-col gap-2 mt-3">
+                <label htmlFor="markdownBody">Body</label>
+                <textarea
+                  value={markdownBody}
+                  onChange={(e) => setMarkdownBody(e.target.value)}
+                  name="markdownBody"
+                  id="markdownBody"
+                  className="border rounded max-h-40 p-2 resize-none overflow-y-auto text-sm"
+                  disabled={isProcessing}
+                  rows={5}
+                ></textarea>
               </div>
-            )}
-            <button
-              type="submit"
-              onClick={() => confirmUpdate()}
-              className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3"
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'UPDATING...' : 'UPDATE'}
-            </button>
+
+              <button
+                type="submit"
+                onClick={() => confirmUpdate()}
+                className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3 self-end"
+                disabled={isProcessing || !markdownBody.trim() || !markdownTitle.trim()}
+
+              >
+                {isProcessing ? 'UPDATING...' : 'UPDATE'}
+              </button>
+            </div>
           </>
         )}
       </Modal>

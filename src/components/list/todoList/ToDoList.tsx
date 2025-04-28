@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Modal from '../modal/Modal';
+import Modal from '@/components/modal/Modal';
 import { useTodos } from '@/context/TodoContext';
 
 function TodoList() {
@@ -170,65 +170,70 @@ function TodoList() {
 
       <Modal open={open} onClose={() => setOpen(false)}>
         {modalType === 'delete' ? (
-          <div className="flex flex-col items-center text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
-              width="100"
-              height="100"
-              viewBox="0 0 24 24"
-              className="h-12 w-12 fill-[#B82132] box-border"
+          <>
+          <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
+          <p className="mb-6">
+            Are you sure you want to delete this to-do?
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setOpen(false)}
+              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
             >
-              <path d="M 10 2 L 9 3 L 5 3 C 4.4 3 4 3.4 4 4 C 4 4.6 4.4 5 5 5 L 7 5 L 17 5 L 19 5 C 19.6 5 20 4.6 20 4 C 20 3.4 19.6 3 19 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C 5 21.1 5.9 22 7 22 L 17 22 C 18.1 22 19 21.1 19 20 L 19 7 L 5 7 z M 9 9 C 9.6 9 10 9.4 10 10 L 10 19 C 10 19.6 9.6 20 9 20 C 8.4 20 8 19.6 8 19 L 8 10 C 8 9.4 8.4 9 9 9 z M 15 9 C 15.6 9 16 9.4 16 10 L 16 19 C 16 19.6 15.6 20 15 20 C 14.4 20 14 19.6 14 19 L 14 10 C 14 9.4 14.4 9 15 9 z"></path>
-            </svg>
-            <h3 className="mt-[10px] font-bold text-xl">Confirm Delete</h3>
-            <p>Are you sure you want to delete this item?</p>
-            <span className="flex flex-row gap-5 mt-[15px]">
-              <button
-                onClick={confirmDelete}
-                className="bg-[#B82132] text-white p-3 rounded-md cursor-pointer"
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'DELETING...' : 'CONFIRM'}
-              </button>
-              <button
-                className="text-slate-700 cursor-pointer"
-                onClick={() => setOpen(false)}
-                disabled={isProcessing}
-              >
-                CANCEL
-              </button>
-            </span>
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
+              disabled={isProcessing}
+            >
+              {isProcessing ? 'Deleting...' : 'Delete'}
+            </button>
           </div>
+        </>
         ) : (
           <>
-            <h3 className="mt-[10px] font-bold text-xl">Edit Task</h3>
-            <input
-              type="text"
-              value={editedText}
-              onChange={(e) => setEditedText(e.target.value)}
-              className="rounded-lg border border-slate-500 p-2 focus:outline-[#EFB036] mt-[15px] w-full"
-              onKeyDown={(e) => e.key === 'Enter' && confirmEdit()}
-              disabled={isProcessing}
-            />
-            <span className="flex flex-row gap-5 mt-[15px]">
-              <button
-                onClick={confirmEdit}
-                className="bg-[#3D8D7A] text-white py-3 px-10 rounded-md cursor-pointer"
-                disabled={isProcessing}
-              >
-                {isProcessing ? 'SAVING...' : 'SAVE'}
-              </button>
-              <button
-                className="text-slate-700 cursor-pointer"
-                onClick={() => setOpen(false)}
-                disabled={isProcessing}
-              >
-                CANCEL
-              </button>
-            </span>
-          </>
+              <div className="mb-4">
+                <label
+                  htmlFor="editedText"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Edit To-Do
+                </label>
+                <input
+                  value={editedText}
+                  onChange={(e) => setEditedText(e.target.value)}
+                  type="text"
+                  name="editedText"
+                  id="editedText"
+                  className="w-full p-2 border rounded"
+                  disabled={isProcessing}
+                />
+              </div>
+              {error && (
+                <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                  {error}
+                </div>
+              )}
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+                  disabled={isProcessing}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmEdit}
+                  className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
+                  disabled={isProcessing || !editedText.trim()}
+                >
+                  {isProcessing ? 'Updating...' : 'Update'}
+                </button>
+              </div>
+            </>
         )}
       </Modal>
     </>

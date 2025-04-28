@@ -1,6 +1,6 @@
 'use client';
 import { useDrive } from '@/context/DriveContext';
-import Modal from '../modal/Modal';
+import Modal from '../../modal/Modal';
 import { useState } from 'react';
 
 export default function ImageGallery() {
@@ -59,7 +59,7 @@ export default function ImageGallery() {
     if (!selectedImageId) return;
     try {
       setIsProcessing(true);
-      await updateImage(selectedImageId,editedText);
+      await updateImage(selectedImageId, editedText);
       setSelectedImageId(null);
     } catch (err) {
       console.error('Error deleting todo:', err);
@@ -103,50 +103,68 @@ export default function ImageGallery() {
       </div>
       <Modal open={open} onClose={() => setOpen(false)}>
         {modal === 'delete' ? (
-          <div className="flex flex-col justify-center items-center">
-            <p>Are you sure you want to delete this image?</p>
-            <div className="flex flex-row gap-5 mt-5">
+          <>
+            <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
+            <p className="mb-6">Are you sure you want to delete this image?</p>
+            <div className="flex justify-end gap-2">
               <button
-                onClick={() => confirmDelete()}
-                className="py-2 px-5 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
-                disabled={isProcessing}
+                onClick={() => setOpen(false)}
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
               >
-                {isProcessing ? 'DELETING...' : 'YES'}
+                Cancel
               </button>
               <button
-                onClick={() => setOpen(!open)}
-                className="py-2 px-5 bg-gray-600 text-white rounded hover:bg-gray-700 cursor-pointer"
+                onClick={confirmDelete}
+                className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
+                disabled={isProcessing}
               >
-                NO
+                {isProcessing ? 'Deleting...' : 'Delete'}
               </button>
             </div>
-          </div>
+          </>
         ) : (
           <>
-            <input
-              type="text"
-              value={editedText}
-              onChange={(e) => setEditedText(e.target.value)}
-              className="rounded-lg border border-slate-500 p-2 focus:outline-[#EFB036] mt-[15px] w-full"
-              onKeyDown={(e) => e.key === 'Enter' && confirmEdit()}
-              disabled={isProcessing}
-            />
-            <span className="flex flex-row gap-5 mt-[15px]">
+            <div className="mb-4">
+              <label
+                htmlFor="imageName"
+                className="block text-sm font-medium mb-2"
+              >
+                Edit Image Name
+              </label>
+              <input
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+                type="text"
+                name="imageName"
+                id="imageName"
+                className="w-full p-2 border rounded"
+                disabled={isProcessing}
+                onKeyDown={(e) => e.key === 'Enter' && confirmEdit()}
+              />
+            </div>
+            {error && (
+              <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                {error}
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
               <button
-                  onClick={confirmEdit}
-                className="bg-[#3D8D7A] text-white py-3 px-10 rounded-md cursor-pointer"
+                type="button"
+                onClick={() => setOpen(false)}
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
                 disabled={isProcessing}
               >
-                {isProcessing ? 'SAVING...' : 'SAVE'}
+                Cancel
               </button>
               <button
-                className="text-slate-700 cursor-pointer"
-                onClick={() => setOpen(!open)}
-                disabled={isProcessing}
+                type="button"
+                onClick={confirmEdit}
+                className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
+                disabled={isProcessing || !editedText.trim()}
               >
-                CANCEL
+                {isProcessing ? 'Updating...' : 'Update'}
               </button>
-            </span>
+            </div>
           </>
         )}
       </Modal>

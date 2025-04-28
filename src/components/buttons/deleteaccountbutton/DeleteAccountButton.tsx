@@ -64,7 +64,7 @@ function DeleteAccountButton({ user }: ProfileProps) {
         <div className="flex flex-col items-center gap-5 text-center">
           <p>Are you sure you want to delete your account?</p>
           <button
-            className={`bg-red-400 px-8 py-2 rounded text-white hover:bg-red-500 cursor-pointer ${
+            className={`bg-red-400 px-8 py-2 rounded text-white hover:bg-red-500 cursor-pointer disabled:bg-red-300${
               loading ? 'opacity-75 cursor-wait' : ''
             }`}
             onClick={handleDeleteAccount}

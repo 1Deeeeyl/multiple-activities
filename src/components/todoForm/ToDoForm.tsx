@@ -28,7 +28,10 @@ export default function TodoForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center rounded-full overflow-hidden  bg-gray-200 w-full justify-between ">
+    <form
+      onSubmit={handleSubmit}
+      className="flex items-center rounded-full overflow-hidden  bg-gray-200 w-full justify-between "
+    >
       <input
         type="text"
         value={todoText}
@@ -39,9 +42,9 @@ export default function TodoForm() {
       />
       <button
         type="submit"
-        className="bg-[#EFB036] text-white
-   px-8 py-4 font-semibold rounded-full text-center"
-        disabled={isSubmitting}
+        className="bg-yellow-400 text-white
+   px-8 py-4 font-semibold rounded-full text-center disabled:bg-yellow-200 hover:bg-yellow-500"
+        disabled={isSubmitting  || !todoText}
       >
         {isSubmitting ? 'Adding...' : 'Add Task'}
       </button>

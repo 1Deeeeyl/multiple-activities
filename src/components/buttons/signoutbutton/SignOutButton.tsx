@@ -20,7 +20,7 @@ function SignOutButton() {
     <button
       onClick={handleLogout}
       disabled={loading}
-      className="bg-gray-200 px-3 py-1 rounded mr-2 cursor-pointer text-gray-900 hover:bg-gray-500 hover:text-gray-200"
+      className="bg-gray-200 px-3 py-1 rounded mr-2 cursor-pointer text-gray-900 hover:bg-gray-500 hover:text-gray-200 disabled:bg-gray-50"
     >
       {loading ? 'Signing out...':'Sign Out'}
     </button>

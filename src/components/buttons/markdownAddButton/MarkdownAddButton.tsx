@@ -57,7 +57,7 @@ export default function MarkdownAddButton() {
         Add Markdown Note
       </button>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <form onSubmit={handleSubmit}>
+        <form className='flex flex-col' onSubmit={handleSubmit}>
           <h2 className="text-xl font-bold mb-4">Create New Markdown Note</h2>
 
           {inputError && (
@@ -92,7 +92,7 @@ export default function MarkdownAddButton() {
           </div>
           <button
             type="submit"
-            className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3"
+            className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded w-fit text-white disabled:bg-green-300 mt-3 self-end"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
