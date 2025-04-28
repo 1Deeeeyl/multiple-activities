@@ -4,7 +4,7 @@ import Modal from '@/components/modal/Modal';
 import { useMarkdown } from '@/context/MarkdownContext';
 
 export default function MarkdownAddButton() {
-  const { addMarkdown, error, resetError } = useMarkdown();
+  const { addMarkdown, resetError } = useMarkdown();
   const [open, setOpen] = useState(false);
   const [markdownTitle, setMarkdownTitle] = useState('');
   const [markdownBody, setMarkdownBody] = useState('');

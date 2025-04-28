@@ -27,7 +27,7 @@ export default async function PokemonPage() {
     <Container>
       <Hero h1="Pokémon Review" description="A simple Pokémon page" />
       <div className="bg-white p-5 rounded flex flex-col justify-center items-center mb-20">
-        <PokemonProvider user={user}>
+        <PokemonProvider>
           <SearchBarPokemon />
           <PokemonList />
         </PokemonProvider>

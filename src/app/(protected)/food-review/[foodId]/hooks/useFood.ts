@@ -233,7 +233,7 @@ export function useFood(foodId: string | undefined) {
     setIsProcessing(true);
 
     try {
-      const { data, error } = await supabase
+      const {  error } = await supabase
         .from('food_reviews')
         .update({ comment: comment, updated_at: now })
         .eq('review_id', currentReviewId)

@@ -49,7 +49,7 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
       const newFileName = `${fileName}.${fileExtension}`;
 
       // Upload the file to storage
-      const { data: fileData, error: fileError } = await supabase.storage
+      const { error: fileError } = await supabase.storage
         .from('food-imgs')
         .upload(user.id + '/' + newFileName, file);
 

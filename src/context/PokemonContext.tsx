@@ -40,12 +40,9 @@ export const PokemonContext = createContext<PokemonContextType | undefined>(
   undefined
 );
 
-type PokemonProviderProps = {
-  user: User;
-  children: React.ReactNode;
-};
+    
 
-export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
+export const PokemonProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient();
   const [pokemons, setPokemons] = useState<PokemonDetail[]>([]);
   const [error, setError] = useState<string | null>(null);

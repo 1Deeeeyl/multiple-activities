@@ -74,7 +74,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
 // add markdown function
   const addMarkdown = async (title: string, body: string) => {
     try {
-      const { data, error: addError } = await supabase
+      const {  error: addError } = await supabase
         .from('markdowns')
         .insert([
           {
@@ -129,7 +129,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   //update function for markdown
   const updateMarkdown = async (id: string, title: string, body: string) => {
     try {
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('markdowns')
         .update({ title: title, body: body, updated_at: now })
         .eq('markdown_id', id)
