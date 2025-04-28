@@ -1,7 +1,6 @@
 'use client';
-import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useCallback } from 'react';
 
 // initial api json structure
 type PokemonListItem = {
@@ -40,10 +39,11 @@ export const PokemonContext = createContext<PokemonContextType | undefined>(
   undefined
 );
 
-    
-
-export const PokemonProvider = ({ children }: { children: React.ReactNode }) => {
-  const supabase = createClient();
+export const PokemonProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [pokemons, setPokemons] = useState<PokemonDetail[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,36 +90,36 @@ export const PokemonProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   // Fetch all Pokemon from api (paginated)
-  const fetchPokemons = async (page = 1) => {
-    setIsLoading(true);
-    setError(null);
+  const fetchPokemons = useCallback(
+    async (page = 1) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const offset = (page - 1) * LIMIT;
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}&offset=${offset}`
-      );
+      try {
+        const offset = (page - 1) * LIMIT;
+        const res = await fetch(
+          `https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}&offset=${offset}`
+        );
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch Pokemon');
+        if (!res.ok) {
+          throw new Error('Failed to fetch Pokemon');
+        }
+
+        const data: PokemonListResponse = await res.json();
+        setTotalPages(Math.ceil(data.count / LIMIT));
+        setCurrentPage(page);
+
+        const pokemonDetails = await fetchPokemonDetails(data.results);
+        setPokemons(pokemonDetails);
+      } catch (error) {
+        console.error('Error fetching Pokemon:', error);
+        setError('Failed to load Pokemon');
+      } finally {
+        setIsLoading(false);
       }
-
-      const data: PokemonListResponse = await res.json();
-
-      // Calculate total pages
-      setTotalPages(Math.ceil(data.count / LIMIT));
-      setCurrentPage(page);
-
-      // Fetch details for each Pokemon
-      const pokemonDetails = await fetchPokemonDetails(data.results);
-      setPokemons(pokemonDetails);
-    } catch (error) {
-      console.error('Error fetching Pokemon:', error);
-      setError('Failed to load Pokemon');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [LIMIT, fetchPokemonDetails]
+  );
 
   // Search for a specific Pokemon
   const searchPokemon = async (query: string) => {
@@ -168,7 +168,7 @@ export const PokemonProvider = ({ children }: { children: React.ReactNode }) => 
     };
 
     loadPokemons();
-  }, []);
+  }, [fetchPokemons]);
 
   const value = {
     pokemons,
