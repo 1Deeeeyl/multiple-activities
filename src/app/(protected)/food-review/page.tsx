@@ -31,9 +31,7 @@ export default async function FoodPage() {
           <FileInputFood />
           <div className="flex flex-col sm:flex-row sm:gap-25 justify-center items-center">
             <FoodList />
-            {/* <SortDropdown /> */}
           </div>
-          {/* <DriveImage /> */}
         </FoodProvider>
       </div>
     </Container>

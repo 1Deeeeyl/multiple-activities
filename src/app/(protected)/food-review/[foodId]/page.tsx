@@ -12,7 +12,6 @@ export default function FoodViewPage() {
   const foodId = params.foodId?.toString();
 
   const {
-    // State
     foodInfo,
     foodName,
     setFoodName,
@@ -33,8 +32,6 @@ export default function FoodViewPage() {
     isOwner,
     isLoading,
     notFound,
-
-    // Functions
     handleUpdateBtn,
     handleDeleteBtn,
     confirmUpdate,

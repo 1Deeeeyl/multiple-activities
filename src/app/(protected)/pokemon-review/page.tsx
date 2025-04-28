@@ -4,7 +4,7 @@ import Container from '@/components/container/Container';
 import Hero from '@/components/hero/Hero';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import SearchBarPokemon from '@/components/searchBarPokemon/SearchBarPokemon';
+import SearchBarPokemon from '@/components/searchBar/searchBarPokemon/SearchBarPokemon';
 import PokemonList from '@/components/list/pokemonList/PokemonList';
 import { PokemonProvider } from '@/context/PokemonContext';
 

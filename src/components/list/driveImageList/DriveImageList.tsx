@@ -22,13 +22,13 @@ export default function ImageGallery() {
   if (images.length === 0) {
     return <div className="text-center py-4">No images uploaded yet.</div>;
   }
-
+//press delete button
   const handleDeleteBtn = (id: string) => {
     setOpen(!open);
     setModal('delete');
     setSelectedImageId(id);
   };
-
+//confirm delete function
   const confirmDelete = async () => {
     if (!selectedImageId) return;
     try {
@@ -43,6 +43,8 @@ export default function ImageGallery() {
       setOpen(false);
     }
   };
+
+  //press update btn
   const handleUpdateBtn = (id: string, currentText: string) => {
     setOpen(!open);
     setModal('update');
@@ -50,6 +52,7 @@ export default function ImageGallery() {
     setEditedText(currentText);
   };
 
+  //fonfirm update function
   const confirmEdit = async () => {
     if (!editedText.trim()) {
       alert("You can't leave that blank!");

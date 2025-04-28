@@ -6,7 +6,7 @@ import Hero from '@/components/hero/Hero';
 import React from 'react';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import SearchBarDrive from '@/components/searchBarDrive/SearchBarDrive';
+import SearchBarDrive from '@/components/searchBar/searchBarDrive/SearchBarDrive';
 import SortDropdown from '@/components/sortDropdown/SortDropdown';
 import type { Metadata } from 'next';
 

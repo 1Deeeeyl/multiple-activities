@@ -2,9 +2,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'; // node package
 
-// Define types
+// foods table format
 type Food = {
   food_id: string;
   profile_id: string;
@@ -19,10 +19,8 @@ type FoodContextType = {
   isLoading: boolean;
   uploadFood: (file: File, foodName: string) => Promise<void>;
   fetchFoods: () => Promise<void>;
-  deleteFood: (foodId: string, imageUrl: string) => Promise<void>;
 };
 
-// Create context
 const FoodContext = createContext<FoodContextType | undefined>(undefined);
 
 type DriveProviderProps = {
@@ -30,13 +28,11 @@ type DriveProviderProps = {
   children: React.ReactNode;
 };
 
-// Provider component
 export function FoodProvider({ user, children }: DriveProviderProps) {
   const [foods, setFoods] = useState<Food[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initialize Supabase client
   const supabase = createClient();
 
   const uploadFood = async (file: File, foodName: string) => {
@@ -46,9 +42,12 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
       }
 
       setIsUploading(true);
+
+      // give new name to file image
       const fileExtension = file.name.split('.').pop();
       const fileName = uuidv4();
       const newFileName = `${fileName}.${fileExtension}`;
+
       // Upload the file to storage
       const { data: fileData, error: fileError } = await supabase.storage
         .from('food-imgs')
@@ -58,14 +57,14 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
         throw fileError;
       }
 
-      console.log('Food image uploaded successfully:', fileData);
+      // console.log('Food image uploaded successfully:', fileData);
 
-      //   // Get the URL of the uploaded image
+      // Get the URL of the uploaded image
       const { data: urlData } = supabase.storage
         .from('food-imgs')
         .getPublicUrl(user.id + '/' + newFileName);
 
-      //   // Insert record into foods table
+      // Insert data in foods table
       const { error: insertError } = await supabase.from('foods').insert([
         {
           profile_id: user.id,
@@ -79,7 +78,7 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
       }
 
       // Refresh foods list after upload
-        await fetchFoods();
+      await fetchFoods();
     } catch (err) {
       console.error('Upload error:', err);
       throw err;
@@ -105,42 +104,14 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
     }
   };
 
-  // Delete a food and its image
-  const deleteFood = async (foodId: string, imageUrl: string) => {
-    // try {
-    //   // Get the authenticated user
-    //   const { data: { user } } = await supabase.auth.getUser();
-    //   if (!user) throw new Error('User not authenticated');
-    //   // Extract the path from the URL
-    //   const path = imageUrl.split('/').slice(-2).join('/');
-    //   // Delete from storage
-    //   const { error: storageError } = await supabase
-    //     .storage
-    //     .from('food-images')
-    //     .remove([path]);
-    //   if (storageError) throw storageError;
-    //   // Delete from database
-    //   const { error: dbError } = await supabase
-    //     .from('foods')
-    //     .delete()
-    //     .eq('food_id', foodId);
-    //   if (dbError) throw dbError;
-    //   // Update state
-    //   setFoods(foods.filter(food => food.food_id !== foodId));
-    // } catch (error) {
-    //   console.error('Error deleting food:', error);
-    //   throw error;
-    // }
-  };
-
   useEffect(() => {
     const loadFoods = async () => {
-        await fetchFoods();
-        console.log(foods)
-      };
-  
-      loadFoods();
-    }, [user.id]);
+      await fetchFoods();
+      console.log(foods);
+    };
+
+    loadFoods();
+  }, [user.id]);
 
   return (
     <FoodContext.Provider
@@ -150,7 +121,6 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
         isLoading,
         uploadFood,
         fetchFoods,
-        deleteFood,
       }}
     >
       {children}
@@ -158,7 +128,6 @@ export function FoodProvider({ user, children }: DriveProviderProps) {
   );
 }
 
-// Custom hook to use the context
 export function useFood() {
   const context = useContext(FoodContext);
   if (context === undefined) {

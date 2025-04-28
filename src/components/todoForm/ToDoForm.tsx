@@ -19,7 +19,7 @@ export default function TodoForm() {
     try {
       setIsSubmitting(true);
       await addTodo(todoText);
-      setTodoText(''); // Clear the input after successful submission
+      setTodoText(''); 
     } catch (err) {
       console.error('Error in form submission:', err);
     } finally {

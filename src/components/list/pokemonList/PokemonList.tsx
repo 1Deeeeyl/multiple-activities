@@ -35,7 +35,7 @@ export default function PokemonList() {
     return <div className="text-center">No Pokémon found</div>;
   }
 
-  // Sort Pokémon based on selected sorting option
+  // pokemon sort
   const sortedPokemons = [...pokemons].sort((a, b) => {
     if (sortBy === 'name') {
       return a.name.localeCompare(b.name);
@@ -49,7 +49,11 @@ export default function PokemonList() {
       <div className="w-full">
         {/* Sort dropdown */}
         <div className="mb-4 flex justify-end">
-          <div className="relative">
+          <div className="flex items-center">
+            <label htmlFor="sort-select" className=" mr-2">
+              Sort by:
+            </label>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}

@@ -3,12 +3,12 @@ import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Simplified Pokemon data structure
+// initial api json structure
 type PokemonListItem = {
   name: string;
   url: string;
 };
-
+// pagination
 type PokemonListResponse = {
   count: number;
   next: string | null;
@@ -16,7 +16,7 @@ type PokemonListResponse = {
   results: PokemonListItem[];
 };
 
-// Simplified Pokemon detail structure with only id, name, and sprite
+// get only necesarry info from api
 type PokemonDetail = {
   id: number;
   name: string;
@@ -53,12 +53,14 @@ export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  const LIMIT = 50; // Number of Pokemon per page
+  const LIMIT = 50; // Number of Pokemon per page on api request
 
+  //This removes the error on ui
   const resetError = () => {
     setError(null);
   };
 
+  //function to get the pokemon's details
   const fetchPokemonDetails = async (
     pokemonList: PokemonListItem[]
   ): Promise<PokemonDetail[]> => {
@@ -90,7 +92,7 @@ export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
     }
   };
 
-  // Fetch all Pokemon (paginated)
+  // Fetch all Pokemon from api (paginated)
   const fetchPokemons = async (page = 1) => {
     setIsLoading(true);
     setError(null);
@@ -132,7 +134,7 @@ export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
     setError(null);
 
     try {
-      // PokeAPI doesn't have a search endpoint, so we'll fetch a single Pokemon by name
+      // api search pokemon format
       const formattedQuery = query.toLowerCase().trim();
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${formattedQuery}`
@@ -171,7 +173,6 @@ export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
     loadPokemons();
   }, []);
 
-  // The value object that will be provided to consumers
   const value = {
     pokemons,
     isLoading,
@@ -188,6 +189,7 @@ export const PokemonProvider = ({ user, children }: PokemonProviderProps) => {
   );
 };
 
+// needed to make useContext work
 export function usePokemon() {
   const context = useContext(PokemonContext);
 

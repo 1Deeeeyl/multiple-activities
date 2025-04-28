@@ -12,7 +12,6 @@ export default function FileInputFood() {
   const [foodName, setFoodName] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
 
-  // Use the food context
   const { uploadFood, isUploading } = useFood();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,17 +25,16 @@ export default function FileInputFood() {
       setFile(null);
     }
   };
-
+  // emulates the inout file even when hidden
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
-
+  // submit file function
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validation
     if (!file) {
       setInputError('Please select a file first');
       return;
@@ -64,7 +62,7 @@ export default function FileInputFood() {
       setIsProcessing(false);
     }
   };
-
+  //press upload button
   const handleUploadButton = () => {
     setOpen(!open);
     setInputError(null);
@@ -89,7 +87,7 @@ export default function FileInputFood() {
             <span className="text-sm text-gray-700 truncate">{fileName}</span>
           </div>
 
-          {/* Original file input, hidden visually */}
+          {/* Original file input, hidden visually recommended on stack overflow*/}
           <input
             ref={fileInputRef}
             className="hidden"
@@ -112,7 +110,6 @@ export default function FileInputFood() {
 
       <Modal open={open} onClose={() => !isUploading && setOpen(false)}>
         <form onSubmit={handleSubmit}>
-
           {inputError && (
             <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
               {inputError}
@@ -154,4 +151,3 @@ export default function FileInputFood() {
     </>
   );
 }
-

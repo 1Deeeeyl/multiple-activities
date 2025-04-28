@@ -38,12 +38,10 @@ export default function FileInput() {
 
       await uploadFile(file);
 
-      // Reset form
       setFileName('No file chosen');
       setFile(null);
 
-      // Refresh images list after upload
-      //   await refreshImages();
+      
     } catch (err) {
       console.error('Upload error:', err);
       alert('Upload failed');
@@ -69,7 +67,7 @@ export default function FileInput() {
             <span className="text-sm text-gray-700 truncate">{fileName}</span>
           </div>
 
-          {/* Original file input, hidden visually */}
+          {/* Original file input, hidden visually recommended on stack overflow*/}
           <input
             ref={fileInputRef}
             className="hidden"

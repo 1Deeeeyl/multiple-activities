@@ -58,3 +58,5 @@ function HomePage({ user }: HomePageProps) {
 }
 
 export default HomePage;
+
+// default index when signed in

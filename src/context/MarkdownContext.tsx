@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+// markdown table format
 type MarkdownData = {
   markdown_id: string;
   profile_id: string;
@@ -38,11 +39,12 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   const now = new Date().toISOString();
   const [isLoading, setIsLoading] = useState(true);
 
+  // reset errors on ui
   const resetError = () => {
     setError(null);
   };
 
-  // Function to fetch all markdowns for the current user
+  // Function to fetch all markdowns for the signed in user
   const fetchMarkdowns = async () => {
     setIsLoading(true);
     try {
@@ -69,6 +71,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
     }
   };
 
+// add markdown function
   const addMarkdown = async (title: string, body: string) => {
     try {
       const { data, error: addError } = await supabase
@@ -101,6 +104,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
     }
   };
 
+  // delete function for markdown
   const deleteMarkdown = async (id: string) => {
     try {
       const { error: deleteError } = await supabase
@@ -122,6 +126,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
     }
   };
 
+  //update function for markdown
   const updateMarkdown = async (id: string, title: string, body: string) => {
     try {
       const { data, error: updateError } = await supabase
@@ -154,7 +159,6 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
     loadMarkdowns();
   }, [user.id]);
 
-  // The value object that will be provided to consumers
   const value = {
     markdowns,
     addMarkdown,
@@ -172,6 +176,7 @@ export const MarkdownProvider = ({ user, children }: MarkdownProviderProps) => {
   );
 };
 
+// needed to make useContext work
 export function useMarkdown() {
   const context = useContext(MarkdownContext);
 

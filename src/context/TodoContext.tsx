@@ -30,7 +30,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  // Fetch todos from Supabase
+  // Fetch the todos Supabase
   useEffect(() => {
     const fetchTodos = async () => {
       try {
@@ -75,7 +75,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     fetchTodos();
   }, [supabase]);
 
-  // Add a new todo
+  // add todo function
   const addTodo = async (todoText: string) => {
     try {
       const {
@@ -121,7 +121,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Toggle a todo's completion status
+  // Toggle is_complete for todo
   const toggleTodo = async (id: string) => {
     try {
       const todoToUpdate = todos.find((todo) => todo.id === id);
@@ -155,7 +155,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Edit a todo's text
+  // Edit todo's text
   const editTodo = async (id: string, newText: string) => {
     try {
       if (!newText.trim()) {
@@ -186,7 +186,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error('Error editing todo:', err);
       setError((err as Error).message);
-      throw err; // Re-throw to handle in component
+      throw err; 
     }
   };
 
@@ -224,7 +224,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Custom hook to use the todo context
+// needed to make useContext work
 export function useTodos() {
   const context = useContext(TodoContext);
 

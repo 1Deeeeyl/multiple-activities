@@ -3,7 +3,7 @@ import React from 'react';
 import { useMarkdown } from '@/context/MarkdownContext';
 import Modal from '@/components/modal/Modal';
 import { useState } from 'react';
-import Markdown from 'react-markdown';
+import Markdown from 'react-markdown'; //node package
 
 export default function MarkdownList() {
   const {
@@ -24,20 +24,20 @@ export default function MarkdownList() {
   const [selectedMarkdownId, setSelectedMarkdownId] = useState<string | null>(
     null
   );
-
+  //press view button
   const handleViewBtn = (title: string, body: string) => {
     setOpen(!open);
     setModal('view');
     setMarkdownTitle(title);
     setMarkdownBody(body);
   };
-
+  // press delete button
   const handleDeleteBtn = (id: string) => {
     setOpen(!open);
     setModal('delete');
     setSelectedMarkdownId(id);
   };
-
+  //confirm delete function
   const confirmDelete = async () => {
     if (!selectedMarkdownId) return;
     try {
@@ -51,7 +51,7 @@ export default function MarkdownList() {
       setOpen(false);
     }
   };
-
+  //press update button
   const handleUpdateBtn = (id: string, title: string, body: string) => {
     setEmpty(null);
     setOpen(!open);
@@ -60,7 +60,7 @@ export default function MarkdownList() {
     setMarkdownTitle(title);
     setMarkdownBody(body);
   };
-
+  // update function
   const confirmUpdate = async () => {
     if (!markdownTitle.trim()) {
       setEmpty('Title is required');
@@ -89,10 +89,6 @@ export default function MarkdownList() {
   if (isLoading) {
     return <div className="text-center py-4">Loading markdown notes...</div>;
   }
-
-  //   if (error) {
-  //     return <div className="text-center py-4 text-red-500">{error}</div>;
-  //   }
 
   if (!isLoading && markdowns.length === 0) {
     return <div className="text-center py-4">No markdown notes available.</div>;
@@ -152,26 +148,26 @@ export default function MarkdownList() {
       <Modal open={open} onClose={() => setOpen(!open)}>
         {modal === 'delete' ? (
           <>
-          <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
-          <p className="mb-6">
-            Are you sure you want to delete this markdown?
-          </p>
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => setOpen(false)}
-              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={confirmDelete}
-              className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Deleting...' : 'Delete'}
-            </button>
-          </div>
-        </>
+            <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
+            <p className="mb-6">
+              Are you sure you want to delete this markdown?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setOpen(false)}
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </>
         ) : modal === 'view' ? (
           <>
             <div>
@@ -232,8 +228,9 @@ export default function MarkdownList() {
                 type="submit"
                 onClick={() => confirmUpdate()}
                 className="bg-green-500 px-5 py-2 hover:bg-green-700 rounded text-white disabled:bg-green-300 mt-3 self-end"
-                disabled={isProcessing || !markdownBody.trim() || !markdownTitle.trim()}
-
+                disabled={
+                  isProcessing || !markdownBody.trim() || !markdownTitle.trim()
+                }
               >
                 {isProcessing ? 'UPDATING...' : 'UPDATE'}
               </button>
