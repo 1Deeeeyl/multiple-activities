@@ -5,13 +5,15 @@ import Modal from '@/components/modal/Modal';
 import { useTodos } from '@/context/TodoContext';
 
 function TodoList() {
-  const { todos, isLoading, error, toggleTodo, editTodo, deleteTodo } = useTodos();
+  const { todos, isLoading, error, toggleTodo, editTodo, deleteTodo } =
+    useTodos();
   const [open, setOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState<string | null>(null);
   const [modalType, setModalType] = useState('');
   const [todoEdit, setTodoEdit] = useState<string | null>(null);
   const [editedText, setEditedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [prioText, setPrioText] = useState('LOW');
 
   // Handle edit click
   const handleEditClick = (id: string, currentText: string) => {
@@ -32,7 +34,7 @@ function TodoList() {
 
     try {
       setIsProcessing(true);
-      await editTodo(todoEdit, editedText);
+      await editTodo(todoEdit, editedText, prioText);
       setOpen(false);
       setTodoEdit(null);
     } catch (err) {
@@ -133,7 +135,7 @@ function TodoList() {
                       : 'sm:max-w-[20ch] cursor-pointer break-words max-w-[15ch]'
                   }`}
                 >
-                  {todo.text}
+                  {todo.text} - Priority Level {todo.priority}
                 </li>
               </span>
               <span className="flex-row flex items-center gap-3">
@@ -171,69 +173,81 @@ function TodoList() {
       <Modal open={open} onClose={() => setOpen(false)}>
         {modalType === 'delete' ? (
           <>
-          <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
-          <p className="mb-6">
-            Are you sure you want to delete this to-do?
-          </p>
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => setOpen(false)}
-              className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={confirmDelete}
-              className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Deleting...' : 'Delete'}
-            </button>
-          </div>
-        </>
+            <h2 className="text-xl font-bold mb-4">Delete Confirmation</h2>
+            <p className="mb-6">Are you sure you want to delete this to-do?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setOpen(false)}
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-red-300"
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </>
         ) : (
           <>
-              <div className="mb-4">
-                <label
-                  htmlFor="editedText"
-                  className="block text-sm font-medium mb-2"
-                >
-                  Edit To-Do
-                </label>
-                <input
-                  value={editedText}
-                  onChange={(e) => setEditedText(e.target.value)}
-                  type="text"
-                  name="editedText"
-                  id="editedText"
-                  className="w-full p-2 border rounded"
-                  disabled={isProcessing}
-                />
+            <div className="mb-4">
+              <label
+                htmlFor="editedText"
+                className="block text-sm font-medium mb-2"
+              >
+                Edit To-Do
+              </label>
+              <input
+                value={editedText}
+                onChange={(e) => setEditedText(e.target.value)}
+                type="text"
+                name="editedText"
+                id="editedText"
+                className="w-full p-2 border rounded"
+                disabled={isProcessing}
+              />
+              <label className="mr-2 font-medium text-gray-700">
+                Priority level:
+              </label>
+              <select
+                defaultValue={prioText}
+                onChange={(e) =>
+                  setPrioText(e.target.value as 'LOW' | 'MEDIUM' | 'HIGH')
+                }
+                className="bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none"
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+              </select>
+            </div>
+            {error && (
+              <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                {error}
               </div>
-              {error && (
-                <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-                  {error}
-                </div>
-              )}
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
-                  disabled={isProcessing}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmEdit}
-                  className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
-                  disabled={isProcessing || !editedText.trim()}
-                >
-                  {isProcessing ? 'Updating...' : 'Update'}
-                </button>
-              </div>
-            </>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="py-2 px-4 bg-gray-300 rounded hover:bg-gray-400"
+                disabled={isProcessing}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmEdit}
+                className="py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-green-300"
+                disabled={isProcessing || !editedText.trim()}
+              >
+                {isProcessing ? 'Updating...' : 'Update'}
+              </button>
+            </div>
+          </>
         )}
       </Modal>
     </>

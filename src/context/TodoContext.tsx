@@ -10,15 +10,16 @@ export type Todo = {
   profile_id: string;
   created_at: string;
   updated_at: string;
+  priority: string;
 };
 
 type TodoContextType = {
   todos: Todo[];
   isLoading: boolean;
   error: string | null;
-  addTodo: (text: string) => Promise<void>;
+  addTodo: (text: string, prioText: string) => Promise<void>;
   toggleTodo: (id: string) => Promise<void>;
-  editTodo: (id: string, newText: string) => Promise<void>;
+  editTodo: (id: string, newText: string, prioText: string) => Promise<void>;
   deleteTodo: (id: string) => Promise<void>;
 };
 
@@ -61,6 +62,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           profile_id: todo.profile_id,
           created_at: todo.created_at,
           updated_at: todo.updated_at,
+          priority: todo.priority,
         }));
 
         setTodos(formattedTodos);
@@ -76,7 +78,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   }, [supabase]);
 
   // add todo function
-  const addTodo = async (todoText: string) => {
+  const addTodo = async (todoText: string, prioText: string) => {
     try {
       const {
         data: { user },
@@ -96,6 +98,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           profile_id: user.id,
           created_at: now,
           updated_at: now,
+          priority: prioText,
         })
         .select();
 
@@ -111,6 +114,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
           profile_id: data[0].profile_id,
           created_at: data[0].created_at,
           updated_at: data[0].updated_at,
+          priority: data[0].priority,
         };
 
         setTodos((prevTodos) => [formattedTodo, ...prevTodos]);
@@ -156,7 +160,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Edit todo's text
-  const editTodo = async (id: string, newText: string) => {
+  const editTodo = async (id: string, newText: string, prioText: string) => {
     try {
       if (!newText.trim()) {
         throw new Error('Task text cannot be empty');
@@ -169,6 +173,7 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
         .update({
           task: newText.trim(),
           updated_at: now,
+          priority: prioText,
         })
         .eq('id', id);
 
@@ -179,14 +184,19 @@ export function TodoProvider({ children }: { children: React.ReactNode }) {
       setTodos(
         todos.map((todo) =>
           todo.id === id
-            ? { ...todo, text: newText.trim(), updated_at: now }
+            ? {
+                ...todo,
+                text: newText.trim(),
+                updated_at: now,
+                priority: prioText,
+              }
             : todo
         )
       );
     } catch (err) {
       console.error('Error editing todo:', err);
       setError((err as Error).message);
-      throw err; 
+      throw err;
     }
   };
 

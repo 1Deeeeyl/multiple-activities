@@ -50,7 +50,7 @@ export const DriveProvider = ({ user, children }: DriveProviderProps) => {
       const { data, error } = await supabase.storage
         .from('drive')
         .list(user.id);
-      console.log('Supabase list response:', { data, error });
+      // console.log('Supabase list response:', { data, error });
       if (error) {
         throw error;
       }
