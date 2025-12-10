@@ -24,27 +24,27 @@ Each activity showcases a different real-world use case — from task management
 
 <h2 style="margin-top: 25px">Features</h2>
 
-### 📝 Activity 1 — To-Do List  
+### 📝 App 1 — To-Do List  
 - Create, Read, Update, Delete tasks  
-- Persistent data using Supabase  
-- Each user only sees their own tasks  
+- Each user only sees their own tasks
+- Mark task as done
 
-### 📁 Activity 2 — Google Drive Lite  
+### 📁 App 2 — Google Drive Lite  
 - CRUD photos  
 - Search by photo name  
 - Sort by name or upload date  
 
-### 🍔 Activity 3 — Food Review App  
+### 🍔 App 3 — Food Review App  
 - Upload and manage food photos  
 - CRUD reviews on each photo  
 - Sort photos by name or date  
 
-### 🔍 Activity 4 — Pokémon Review App  
+### 🔍 App 4 — Pokémon Review App  
 - Search Pokémon by name  
 - CRUD reviews on Pokémon entries  
-- Sort by name or upload date  
+- Sort by name or National Pokédex number  
 
-### ✍️ Activity 5 — Markdown Notes App  
+### ✍️ App 5 — Markdown Notes App  
 - Create and edit Markdown notes  
 - View raw Markdown  
 - View live Markdown preview  
@@ -74,22 +74,22 @@ Just make sure to configure your own Supabase project and environment variables 
 
 1. **Clone The Repository**
 <div style="margin-top: 15px; margin-bottom: 15px">
-  <img src="YOUR_STEP1_SVG" alt="Step 1" width="500">
+  <img src="https://raw.githubusercontent.com/1Deeeeyl/v1Portfolio/main/readmefiles/1.svg" alt="Step 1" width="500">
 </div>
 
 2. **Navigate To The Project Folder**
 <div style="margin-top: 15px; margin-bottom: 15px">
-  <img src="YOUR_STEP2_SVG" alt="Step 2" width="300">
+  <img src="https://raw.githubusercontent.com/1Deeeeyl/v1Portfolio/main/readmefiles/2.svg" alt="Step 2" width="300">
 </div>
 
 3. **Install Dependencies**
 <div style="margin-top: 15px; margin-bottom: 15px">
-  <img src="YOUR_STEP3_SVG" alt="Step 3" width="300">
+  <img src="https://raw.githubusercontent.com/1Deeeeyl/v1Portfolio/main/readmefiles/3.svg" alt="Step 3" width="300">
 </div>
 
 4. **Start the Development Server**
 <div style="margin-top: 15px; margin-bottom: 15px">
-  <img src="YOUR_STEP4_SVG" alt="Step 4" width="300">
+  <img src="https://raw.githubusercontent.com/1Deeeeyl/v1Portfolio/main/readmefiles/4.svg" alt="Step 4" width="300">
 </div>
 
 <h2 style="margin-top: 25px">License</h2>
