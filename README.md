@@ -54,12 +54,12 @@ Each activity showcases a different real-world use case — from task management
 
 <p>
 Built using <b><a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer">Next.js 15</a></b> and <b><a href="https://supabase.com/" target="_blank" rel="noopener noreferrer">Supabase</a></b>.  
-Styled with <b><a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">Tailwind CSS</a></b> and hosted on <b><a href="https://pages.cloudflare.com/" target="_blank" rel="noopener noreferrer">Cloudflare Pages</a></b>.
+Styled with <b><a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">Tailwind CSS</a></b> and hosted on <b><a href="https://vercel.com/" target="_blank" rel="noopener noreferrer">Cloudflare Pages</a></b>.
 </p>
 
 <p>
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=nextjs,typescript,react,tailwind,supabase,cloudflare" />
+    <img src="https://skillicons.dev/icons?i=nextjs,typescript,react,tailwind,supabase,vercel" />
   </a>
 </p>
 
