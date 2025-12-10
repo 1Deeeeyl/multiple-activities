@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<a name="readme-top"></a>
 
-## Getting Started
+<h1>Multiple Activities App</h1>
 
-First, run the development server:
+<div align="center">
+  <div>
+    <img src="https://raw.githubusercontent.com/1Deeeeyl/v1Portfolio/main/src/assets/images/projects/login.png" alt="Multiple Activities App Cover" width="1080" style="margin-top: 15px">
+  </div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+ 
+</div>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+</div>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<h2 style="margin-top: 25px">About</h2>
 
-## Learn More
+<p>
+The <b>Multiple Activities App</b> is a comprehensive multi-feature project built using <b>Next.js</b> and <b>Supabase</b>.  
+It contains <b>five mini-apps</b> designed to demonstrate Supabase authentication, CRUD operations, relational data handling, and state persistence.  
+Each activity showcases a different real-world use case — from task management to file storage, reviews, and markdown editing.
+</p>
 
-To learn more about Next.js, take a look at the following resources:
+<h2 style="margin-top: 25px">Features</h2>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📝 Activity 1 — To-Do List  
+- Create, Read, Update, Delete tasks  
+- Persistent data using Supabase  
+- Each user only sees their own tasks  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📁 Activity 2 — Google Drive Lite  
+- CRUD photos  
+- Search by photo name  
+- Sort by name or upload date  
 
-## Deploy on Vercel
+### 🍔 Activity 3 — Food Review App  
+- Upload and manage food photos  
+- CRUD reviews on each photo  
+- Sort photos by name or date  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🔍 Activity 4 — Pokémon Review App  
+- Search Pokémon by name  
+- CRUD reviews on Pokémon entries  
+- Sort by name or upload date  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### ✍️ Activity 5 — Markdown Notes App  
+- Create and edit Markdown notes  
+- View raw Markdown  
+- View live Markdown preview  
+- Full CRUD functionality  
+
+<h2 style="margin-top: 25px">Technologies Used</h2>
+
+<p>
+Built using <b><a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer">Next.js 15</a></b> and <b><a href="https://supabase.com/" target="_blank" rel="noopener noreferrer">Supabase</a></b>.  
+Styled with <b><a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">Tailwind CSS</a></b> and hosted on <b><a href="https://pages.cloudflare.com/" target="_blank" rel="noopener noreferrer">Cloudflare Pages</a></b>.
+</p>
+
+<p>
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=nextjs,typescript,react,tailwind,supabase,cloudflare" />
+  </a>
+</p>
+
+<h2 style="margin-top: 25px">How To Use</h2>
+
+<p>
+If you'd like to clone or extend this project, feel free!  
+Just make sure to configure your own Supabase project and environment variables for authentication and database access.
+</p>
+
+<h3>Installation</h3>
+
+1. **Clone The Repository**
+<div style="margin-top: 15px; margin-bottom: 15px">
+  <img src="YOUR_STEP1_SVG" alt="Step 1" width="500">
+</div>
+
+2. **Navigate To The Project Folder**
+<div style="margin-top: 15px; margin-bottom: 15px">
+  <img src="YOUR_STEP2_SVG" alt="Step 2" width="300">
+</div>
+
+3. **Install Dependencies**
+<div style="margin-top: 15px; margin-bottom: 15px">
+  <img src="YOUR_STEP3_SVG" alt="Step 3" width="300">
+</div>
+
+4. **Start the Development Server**
+<div style="margin-top: 15px; margin-bottom: 15px">
+  <img src="YOUR_STEP4_SVG" alt="Step 4" width="300">
+</div>
+
+<h2 style="margin-top: 25px">License</h2>
+
+This project is licensed under the MIT License — see the <a href="LICENSE.md">LICENSE.md</a> file for details.
