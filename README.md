@@ -59,7 +59,7 @@ Styled with <b><a href="https://tailwindcss.com/" target="_blank" rel="noopener 
 
 <p>
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=nextjs,typescript,react,tailwind,supabase,vercel" />
+    <img src="https://skillicons.dev/icons?i=nextjs,typescript,tailwind,supabase,vercel" />
   </a>
 </p>
 
